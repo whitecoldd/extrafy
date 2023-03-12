@@ -4,9 +4,7 @@ import React from "react";
 export default function Auth({ navigation }) {
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
-      <Text style={{ textAlign: "center", fontSize: 32, fontStyle: "bold" }}>
-        Auth
-      </Text>
+      <Text style={{ textAlign: "center" }}>Auth</Text>
       <Button
         title="Register"
         onPress={() => navigation.navigate("Register")}

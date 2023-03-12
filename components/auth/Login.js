@@ -20,9 +20,7 @@ const Login = () => {
   };
   return (
     <View>
-      <Text style={{ textAlign: "center", fontSize: 32, fontStyle: "bold" }}>
-        Login
-      </Text>
+      <Text style={{ textAlign: "center" }}>Login</Text>
       <TextInput
         placeholder="email"
         name="email"
