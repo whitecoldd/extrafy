@@ -1,4 +1,5 @@
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 import { USER_STATE_CHANGE } from "../constants/index.js";
 
 export function fetchUser() {

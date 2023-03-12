@@ -4,7 +4,8 @@ import AuthScreen from "./components/auth/Auth";
 import RegisterScreen from "./components/auth/Register";
 import LoginScreen from "./components/auth/Login";
 import MainScreen from "./components/Main";
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
@@ -39,8 +40,9 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   const [loaded, setLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const auth = firebase.auth();
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
+    auth.onAuthStateChanged((user) => {
       if (!user) {
         setLoaded(true);
         setLoggedIn(false);

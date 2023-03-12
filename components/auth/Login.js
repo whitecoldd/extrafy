@@ -1,7 +1,7 @@
 import { View, Text, TextInput, Button } from "react-native";
 import React, { useState } from "react";
 
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
