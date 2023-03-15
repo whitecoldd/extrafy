@@ -36,7 +36,7 @@ const Main = (props) => {
       barStyle={{ backgroundColor: "#f0e6ef" }}
     >
       <Tab.Screen
-        name="Feed"
+        name="FeedC"
         component={FeedScreen}
         options={{
           headerShown: false,
@@ -51,7 +51,7 @@ const Main = (props) => {
         }}
       />
       <Tab.Screen
-        name="Profile"
+        name="ProfileC"
         component={ProfileScreen}
         options={{
           headerShown: false,
@@ -66,12 +66,12 @@ const Main = (props) => {
         }}
       />
       <Tab.Screen
-        name="Add"
+        name="AddC"
         component={EmptyScreen}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
             e.preventDefault();
-            navigation.navigate("AddMain");
+            navigation.navigate("Add");
           },
         })}
         options={{

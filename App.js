@@ -14,7 +14,7 @@ import thunk from "redux-thunk";
 
 import Loading from "./components/Loading";
 import AddScreen from "./components/main/Add";
-import ProfileScreen from "./components/main/Profile";
+import SaveScreen from "./components/main/Save";
 
 const store = configureStore({
   reducer: rootReducer,
@@ -37,7 +37,7 @@ if (firebase.apps.length === 0) {
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default function App({ navigation }) {
   const [loaded, setLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const auth = firebase.auth();
@@ -80,7 +80,16 @@ export default function App() {
               options={{ headerShown: false }}
             />
             {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
-            <Stack.Screen name="AddMain" component={AddScreen} />
+            <Stack.Screen
+              name="Add"
+              component={AddScreen}
+              navigation={navigation}
+            />
+            <Stack.Screen
+              name="Save"
+              component={SaveScreen}
+              navigation={navigation}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
