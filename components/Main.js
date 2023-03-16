@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUser } from "../redux/actions/index.js";
+import { fetchUser, fetchUserPosts } from "../redux/actions/index.js";
 import Loading from "./Loading.js";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import FeedScreen from "./main/Feed.js";
@@ -17,9 +17,10 @@ const EmptyScreen = () => {
 };
 
 const Main = (props) => {
-  const { fetchUser, currentUser } = props;
+  const { fetchUser, fetchUserPosts } = props;
   useEffect(() => {
     fetchUser();
+    fetchUserPosts();
   }, []);
 
   // if (currentUser == undefined) {
@@ -89,6 +90,6 @@ const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
 });
 const mapDispatchProps = (dispatch) =>
-  bindActionCreators({ fetchUser }, dispatch);
+  bindActionCreators({ fetchUser, fetchUserPosts }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchProps)(Main);

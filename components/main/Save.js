@@ -2,7 +2,6 @@ import { View, Text, Image, TextInput, Button } from "react-native";
 import React, { useState } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/firestore";
-import "firebase/firebase-storage-compat";
 import "firebase/compat/auth";
 
 const Save = (props) => {

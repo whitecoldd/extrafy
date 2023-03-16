@@ -18,7 +18,11 @@ import SaveScreen from "./components/main/Save";
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware(thunk),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+      thunk: thunk,
+    }),
 });
 
 const firebaseConfig = {
