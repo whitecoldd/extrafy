@@ -1,4 +1,3 @@
-import { View, Text } from "react-native";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -8,7 +7,9 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import FeedScreen from "./main/Feed.js";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import ProfileScreen from "./main/Profile.js";
-import AddScreen from "./main/Add.js";
+import SearchScreen from "./main/Search.js";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -17,7 +18,7 @@ const EmptyScreen = () => {
 };
 
 const Main = (props) => {
-  const { fetchUser, fetchUserPosts } = props;
+  const { fetchUser, fetchUserPosts, navigation } = props;
   useEffect(() => {
     fetchUser();
     fetchUserPosts();
@@ -37,7 +38,7 @@ const Main = (props) => {
       barStyle={{ backgroundColor: "#f0e6ef" }}
     >
       <Tab.Screen
-        name="FeedC"
+        name="Feed"
         component={FeedScreen}
         options={{
           headerShown: false,
@@ -52,8 +53,32 @@ const Main = (props) => {
         }}
       />
       <Tab.Screen
-        name="ProfileC"
+        name="Search"
+        component={SearchScreen}
+        navigation={navigation}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="magnify"
+              color={color}
+              size={26}
+              focused={false}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
         component={ProfileScreen}
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
+            e.preventDefault();
+            navigation.navigate("Profile", {
+              uid: firebase.auth().currentUser.uid,
+            });
+          },
+        })}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
@@ -67,7 +92,7 @@ const Main = (props) => {
         }}
       />
       <Tab.Screen
-        name="AddC"
+        name="AddScreen"
         component={EmptyScreen}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
