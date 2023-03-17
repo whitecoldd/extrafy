@@ -3,6 +3,7 @@ import "firebase/compat/firestore";
 import {
   USER_STATE_CHANGE,
   USER_POSTS_STATE_CHANGE,
+  USER_FOLLOWS_STATE_CHANGE,
 } from "../constants/index.js";
 
 export function fetchUser() {
@@ -38,6 +39,23 @@ export function fetchUserPosts() {
         });
         console.log(posts);
         dispatch({ type: USER_POSTS_STATE_CHANGE, posts });
+      });
+  };
+}
+export function fetchUserFollows() {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("follows")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollows")
+      .onSnapshot((snapshot) => {
+        let follows = snapshot.docs.map((doc) => {
+          const id = doc.id;
+          return id;
+        });
+        console.log(follows);
+        dispatch({ type: USER_FOLLOWS_STATE_CHANGE, follows });
       });
   };
 }

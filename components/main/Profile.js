@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList, StyleSheet } from "react-native";
+import { View, Text, Image, FlatList, StyleSheet, Button } from "react-native";
 import React, { useEffect, useState } from "react";
 
 import { connect } from "react-redux";
@@ -11,6 +11,7 @@ import Loading from "../Loading";
 const Profile = (props) => {
   const [userPosts, setUserPosts] = useState([]);
   const [user, setUser] = useState(null);
+  const [follow, setFollow] = useState(false);
   useEffect(() => {
     const { currentUser, posts } = props;
     if (props.route.params.uid === firebase.auth().currentUser.uid) {
@@ -47,7 +48,31 @@ const Profile = (props) => {
           setUserPosts(posts);
         });
     }
-  }, [props.route.params.uid]);
+    if (props.follows.indexOf(props.route.params.uid) > -1) {
+      setFollow(true);
+    } else {
+      setFollow(false);
+    }
+  }, [props.route.params.uid, props.follows]);
+
+  const onFollow = () => {
+    firebase
+      .firestore()
+      .collection("follows")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollows")
+      .doc(props.route.params.uid)
+      .set({});
+  };
+  const onUnfollow = () => {
+    firebase
+      .firestore()
+      .collection("follows")
+      .doc(firebase.auth().currentUser.uid)
+      .collection("userFollows")
+      .doc(props.route.params.uid)
+      .delete();
+  };
 
   if (user === null) {
     return <Loading />;
@@ -58,6 +83,15 @@ const Profile = (props) => {
       <View style={styles.info}>
         <Text>{user.username}</Text>
         <Text>{user.email}</Text>
+        {props.route.params.uid !== firebase.auth().currentUser.uid ? (
+          <View>
+            {follow ? (
+              <Button title="Unfollow" onPress={() => onUnfollow()} />
+            ) : (
+              <Button title="Follow" onPress={() => onFollow()} />
+            )}
+          </View>
+        ) : null}
       </View>
       <View style={styles.gallery}>
         <FlatList
@@ -96,5 +130,6 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
   posts: store.userState.posts,
+  follows: store.userState.follows,
 });
 export default connect(mapStateToProps, null)(Profile);
