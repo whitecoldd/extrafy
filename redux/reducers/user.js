@@ -2,6 +2,7 @@ import {
   USER_POSTS_STATE_CHANGE,
   USER_STATE_CHANGE,
   USER_FOLLOWS_STATE_CHANGE,
+  CLEAR_DATA,
 } from "../constants";
 
 const initialState = {
@@ -27,6 +28,8 @@ export const user = (state = initialState, action) => {
         ...state,
         follows: action.follows,
       };
+    case CLEAR_DATA:
+      return initialState;
     default:
       return state;
   }

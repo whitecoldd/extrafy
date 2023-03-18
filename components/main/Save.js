@@ -4,7 +4,7 @@ import firebase from "firebase/compat/app";
 import "firebase/firestore";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import "firebase/firebase-storage-compat";
+import "firebase/compat/storage";
 
 const Save = (props) => {
   console.log(props.route.params.image);

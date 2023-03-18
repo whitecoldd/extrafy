@@ -5,6 +5,7 @@ import {
   fetchUser,
   fetchUserPosts,
   fetchUserFollows,
+  clearData,
 } from "../redux/actions/index.js";
 import Loading from "./Loading.js";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
@@ -22,8 +23,10 @@ const EmptyScreen = () => {
 };
 
 const Main = (props) => {
-  const { fetchUser, fetchUserPosts, fetchUserFollows, navigation } = props;
+  const { clearData, fetchUser, fetchUserPosts, fetchUserFollows, navigation } =
+    props;
   useEffect(() => {
+    clearData();
     fetchUser();
     fetchUserPosts();
     fetchUserFollows();
@@ -120,6 +123,9 @@ const mapStateToProps = (store) => ({
   currentUser: store.userState.currentUser,
 });
 const mapDispatchProps = (dispatch) =>
-  bindActionCreators({ fetchUser, fetchUserPosts, fetchUserFollows }, dispatch);
+  bindActionCreators(
+    { fetchUser, fetchUserPosts, fetchUserFollows, clearData },
+    dispatch
+  );
 
 export default connect(mapStateToProps, mapDispatchProps)(Main);

@@ -74,6 +74,10 @@ const Profile = (props) => {
       .delete();
   };
 
+  const onLogout = () => {
+    firebase.auth().signOut();
+  };
+
   if (user === null) {
     return <Loading />;
   }
@@ -91,7 +95,9 @@ const Profile = (props) => {
               <Button title="Follow" onPress={() => onFollow()} />
             )}
           </View>
-        ) : null}
+        ) : (
+          <Button title="Log out" onPress={() => onLogout()} />
+        )}
       </View>
       <View style={styles.gallery}>
         <FlatList
