@@ -1,7 +1,15 @@
 import { Camera, CameraType } from "expo-camera";
 import { useState } from "react";
-import { Button, StyleSheet, Text, Image, View } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  Image,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { MaterialCommunityIcons, Feather, AntDesign } from "@expo/vector-icons";
 
 export default function Add({ navigation }) {
   const [type, setType] = useState(CameraType.back);
@@ -63,22 +71,36 @@ export default function Add({ navigation }) {
           ratio={"1:1"}
           ref={(ref) => takeShot(ref)}
         />
+        <View style={styles.btnContainer}>
+          <TouchableOpacity title="Flip Image" onPress={toggleCameraType}>
+            <MaterialCommunityIcons
+              name="camera-flip"
+              size={50}
+              color="white"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{ marginLeft: 50, marginRight: 50 }}
+            onPress={() => takePic()}
+          >
+            <Feather name="circle" size={70} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity title="Choose From Gallery" onPress={pickImage}>
+            <AntDesign name="picture" size={50} color="white" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.posContainer}>
+          <TouchableOpacity
+            title="SaveBtn"
+            onPress={() => navigation.navigate("Save", { image })}
+          >
+            <Feather name="save" size={50} color="white" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.pictureContainer}>
+          {image ? <Image source={{ uri: image }} style={{flex:1}} /> : null}
+        </View>
       </View>
-
-      <Button
-        style={styles.button}
-        title="Flip Image"
-        onPress={toggleCameraType}
-      />
-      <Button title="Take a Pic" onPress={() => takePic()} />
-      <Button title="Choose From Gallery" onPress={pickImage} />
-      <Button
-        title="SaveBtn"
-        onPress={() => navigation.navigate("Save", { image })}
-      />
-      {image && (
-        <Image source={{ uri: image }} style={styles.pictureContainer} />
-      )}
     </View>
   );
 }
@@ -90,18 +112,32 @@ const styles = StyleSheet.create({
   },
   cameraContainer: {
     flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
+    position: "relative",
   },
   fixedRatio: {
     flex: 1,
     aspectRatio: 1,
   },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
+  posContainer: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+  },
+  btnContainer: {
+    position: "absolute",
+    bottom: 5,
+    right: "12%",
+    flexDirection: "row",
     alignItems: "center",
   },
   pictureContainer: {
-    flex: 1,
+    position: "absolute",
+    top: 10,
+    left: 10,
+    width: 100,
+    height: 100,
+    borderWidth: 2,
+    borderColor: "white",
   },
 });

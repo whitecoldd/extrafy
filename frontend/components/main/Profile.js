@@ -1,10 +1,18 @@
-import { View, Text, Image, FlatList, StyleSheet, Button } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 
 import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import Loading from "../Loading";
 
@@ -12,11 +20,13 @@ const Profile = (props) => {
   const [userPosts, setUserPosts] = useState([]);
   const [user, setUser] = useState(null);
   const [follow, setFollow] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const { currentUser, posts } = props;
     if (props.route.params.uid === firebase.auth().currentUser.uid) {
       setUser(currentUser);
       setUserPosts(posts);
+      setLoading(false);
     } else {
       firebase
         .firestore()
@@ -25,10 +35,14 @@ const Profile = (props) => {
         .get()
         .then((snapshot) => {
           if (snapshot.exists) {
-            setUser(snapshot.data());
+            props.navigation.setOptions({
+              title: snapshot.data().username,
+            });
+            setUser({ uid: props.route.params.uid, ...snapshot.data() });
           } else {
             console.log("User doesn't exist");
           }
+          setLoading(false);
         });
 
       firebase
@@ -44,7 +58,6 @@ const Profile = (props) => {
             const id = doc.id;
             return { id, ...data };
           });
-          console.log(posts);
           setUserPosts(posts);
         });
     }
@@ -53,7 +66,7 @@ const Profile = (props) => {
     } else {
       setFollow(false);
     }
-  }, [props.route.params.uid, props.follows]);
+  }, [props.route.params.uid, props.follows, props.currentUser, props.posts]);
 
   const onFollow = () => {
     firebase
@@ -79,24 +92,47 @@ const Profile = (props) => {
   };
 
   if (user === null) {
+    return null;
+  }
+  if (loading) {
     return <Loading />;
   }
 
   return (
     <View style={styles.container}>
-      <View style={styles.info}>
-        <Text>{user.username}</Text>
-        <Text>{user.email}</Text>
+      <View
+        style={
+          props.route.params.uid !== firebase.auth().currentUser.uid
+            ? styles.info
+            : styles.infoSelf
+        }
+      >
+        <View>
+          <Text>{user.username}</Text>
+          <Text>{user.email}</Text>
+        </View>
         {props.route.params.uid !== firebase.auth().currentUser.uid ? (
-          <View>
+          <View style={styles.btnContainer1}>
             {follow ? (
-              <Button title="Unfollow" onPress={() => onUnfollow()} />
+              <TouchableOpacity style={styles.btn} onPress={() => onUnfollow()}>
+                <Text style={{ backgroundColor: "transparent" }}>Unfollow</Text>
+              </TouchableOpacity>
             ) : (
-              <Button title="Follow" onPress={() => onFollow()} />
+              <TouchableOpacity style={styles.btn} onPress={() => onFollow()}>
+                <Text style={{ backgroundColor: "transparent" }}>Follow</Text>
+              </TouchableOpacity>
             )}
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => props.navigation.navigate("Chat", { user })}
+            >
+              <Text style={{ backgroundColor: "transparent" }}>Message</Text>
+            </TouchableOpacity>
           </View>
         ) : (
-          <Button title="Log out" onPress={() => onLogout()} />
+          <TouchableOpacity onPress={() => onLogout()}>
+            <MaterialCommunityIcons name="logout" size={24} color="#ab87ff" />
+          </TouchableOpacity>
         )}
       </View>
       <View style={styles.gallery}>
@@ -118,18 +154,44 @@ const Profile = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 40,
+    backgroundColor: "#f0e6ef",
   },
   info: {
+    flex: 1 / 5,
     margin: 10,
   },
-  gallery: { flex: 1 },
+  infoSelf: {
+    margin: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  gallery: { flex: 4 / 5 },
   image: {
-    flex: 1,
     aspectRatio: 1 / 1,
+    margin: 1,
   },
   imgContainer: {
     flex: 1 / 3,
+  },
+  btnContainer1: {
+    flex: 1,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    margin: 0,
+  },
+  btn: {
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    borderColor: "#ab87ff",
+    backgroundColor: "#ab87ff",
+    fontSize: 16,
+    width: "40%",
+    padding: 8,
+    color: "#FFFFE0",
+    marginTop: 5,
   },
 });
 
