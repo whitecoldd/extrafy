@@ -87,9 +87,9 @@ const Comments = (props) => {
         renderItem={({ item }) => (
           <View>
             {item.user !== undefined ? (
-              <Text style={styles.text}>{item.user.username}</Text>
+              <Text style={styles.text}>{item.user?.username}</Text>
             ) : null}
-            <Text style={styles.comment}>{item.comment} </Text>
+            <Text style={styles.comment}>{item.comment}</Text>
           </View>
         )}
       />
@@ -104,12 +104,11 @@ const Comments = (props) => {
           aria-busy
         />
         <TouchableOpacity onPress={() => onCommentSend()}>
-          {" "}
           <MaterialCommunityIcons
             name="send-circle"
             size={26}
             color={"#ab87ff"}
-          />{" "}
+          />
         </TouchableOpacity>
       </View>
     </View>

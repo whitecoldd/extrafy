@@ -15,6 +15,7 @@ import ProfileScreen from "./main/Profile.js";
 import SearchScreen from "./main/Search.js";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import ChatListScreen from "./main/ChatList.js";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -69,6 +70,22 @@ const Main = (props) => {
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
               name="magnify"
+              color={color}
+              size={26}
+              focused={false}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="ChatList"
+        component={ChatListScreen}
+        navigation={navigation}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="chat"
               color={color}
               size={26}
               focused={false}

@@ -7,8 +7,11 @@ import {
   USERS_POSTS_STATE_CHANGE,
   USER_FOLLOWS_STATE_CHANGE,
   USERS_DATA_STATE_CHANGE,
+  USER_MESSAGES_STATE_CHANGE,
+  USER_MESSAGE_STATE_CHANGE,
   CLEAR_DATA,
   USERS_LIKES_STATE_CHANGE,
+  USER_CHATS_STATE_CHANGE,
 } from "../constants/index.js";
 
 export function clearData() {
@@ -33,6 +36,69 @@ export function fetchUser() {
       });
   };
 }
+
+export function fetchUserChats() {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .where("users", "array-contains", firebase.auth().currentUser.uid)
+      .onSnapshot((snapshot) => {
+        let chats = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { id, ...data };
+        });
+        console.log(chats);
+        dispatch({ type: USER_CHATS_STATE_CHANGE, chats });
+        for (let i = 0; i < chats.length; i++) {
+          dispatch(fetchUsersMessages(chats[i].id));
+        }
+      });
+  };
+}
+
+export function fetchUsersMessages(chatId) {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .doc(chatId)
+      .collection("messages")
+      .orderBy("created_at", "asc")
+      .onSnapshot((snapshot) => {
+        let messages = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { id, ...data };
+        });
+        console.log(messages);
+        dispatch({ type: USER_MESSAGES_STATE_CHANGE, messages, chatId });
+      });
+  };
+}
+
+export function sendMessage(chatId, message) {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .doc(chatId)
+      .collection("messages")
+      .add({
+        text: message,
+        sender: firebase.auth().currentUser.uid,
+        created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+      .then(() => {
+        dispatch({ type: USER_MESSAGE_STATE_CHANGE, message, chatId });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+}
+
 export function fetchUserPosts() {
   return (dispatch) => {
     firebase

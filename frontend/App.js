@@ -16,6 +16,7 @@ import Loading from "./components/Loading";
 import AddScreen from "./components/main/Add";
 import SaveScreen from "./components/main/Save";
 import CommentsScreen from "./components/main/Comments";
+import ChatScreen from "./components/main/Chat";
 
 const store = configureStore({
   reducer: rootReducer,
@@ -95,6 +96,11 @@ export default function App(props, { navigation }) {
             <Stack.Screen
               name="Comments"
               component={CommentsScreen}
+              navigation={navigation}
+            />
+            <Stack.Screen
+              name="Chat"
+              component={ChatScreen}
               navigation={navigation}
             />
           </Stack.Navigator>
