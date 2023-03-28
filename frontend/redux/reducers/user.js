@@ -37,7 +37,7 @@ export const user = (state = initialState, action) => {
     case USER_CHATS_STATE_CHANGE: {
       return {
         ...state,
-        chats: action.chats,
+        chats: [...state.chats, ...action.chats],
       };
     }
     case USER_MESSAGES_STATE_CHANGE: {

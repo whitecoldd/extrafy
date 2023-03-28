@@ -1,51 +1,54 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, FlatList } from "react-native";
-import { ListItem, Avatar } from "react-native-elements";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
-import "firebase/compat/auth";
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  FlatList,
+} from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserChats } from "../../redux/actions/index.js";
+
 const ChatList = ({ navigation }) => {
-  const [chats, setChats] = useState([]);
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.userState.currentUser);
+  const chats = useSelector((state) => state.userState.chats);
 
   useEffect(() => {
-    const unsub = firebase.firestore()
-      .collection("chats")
-      .where("users", "array-contains", firebase.auth().currentUser.uid)
-      .orderBy("created_at", "desc")
-      .onSnapshot((snapshot) => {
-        const chatList = snapshot.docs.map((doc) => {
-          const chat = doc.data();
-          chat.id = doc.id;
-          return chat;
-        });
-        setChats(chatList);
-      });
-
-    return unsub;
+    dispatch(fetchUserChats());
   }, []);
 
-  const renderItem = ({ item }) => (
-    <ListItem
-      key={item.id}
-      bottomDivider
-      onPress={() => navigation.navigate("Chat", { chat: item })}
-    >
-      <Avatar rounded source={{ uri: item.photoURL }} />
-      <ListItem.Content>
-        <ListItem.Title>{item.displayName}</ListItem.Title>
-        <ListItem.Subtitle>{item.lastMessage}</ListItem.Subtitle>
-      </ListItem.Content>
-      <ListItem.Chevron />
-    </ListItem>
-  );
+  const onPressChat = (user) => {
+    navigation.navigate("Chat", { user });
+  };
+
+  console.log(chats);
+
+  const renderChat = ({ item }) => {
+    const otherUser = item.users.filter(
+      (user) => user.uid !== currentUser.uid
+    )[0];
+    return (
+      <TouchableOpacity
+        style={styles.chatContainer}
+        onPress={() => onPressChat(otherUser)}
+      >
+        <Text style={styles.chatUsername}>{otherUser.username}</Text>
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={chats}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+      {chats.length !== 0 ? (
+        <FlatList
+          data={chats}
+          renderItem={renderChat}
+          keyExtractor={(item) => item.id}
+        />
+      ) : (
+        <Text>No chats yet</Text>
+      )}
     </View>
   );
 };
@@ -53,6 +56,16 @@ const ChatList = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
+  },
+  chatContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  chatUsername: {
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
 

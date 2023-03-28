@@ -27,7 +27,6 @@ const Feed = (props) => {
 
       setPosts(props.feed);
     }
-    console.log(posts);
   }, [props.usersFollowsLoaded, props.feed]);
 
   const onLike = (userId, postId) => {

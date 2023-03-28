@@ -35,7 +35,6 @@ const Comments = (props) => {
         }
       }
       setComments(comments);
-      console.log(comments);
     }
     if (props.route.params.postId !== postId) {
       firebase
@@ -58,7 +57,7 @@ const Comments = (props) => {
     } else {
       matchUserToComment(comments);
     }
-  }, [props.route.params.postId, props.users]);
+  }, [props.route.params.postId, props.users, comments]);
 
   const onCommentSend = () => {
     firebase

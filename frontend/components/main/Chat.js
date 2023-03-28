@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUsersMessages, sendMessage } from "../../redux/actions";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
-import { timeDifference } from "../../utils/timeDiff";
 
 const Chat = (props) => {
   const scrollViewRef = useRef();
@@ -165,7 +164,7 @@ const styles = StyleSheet.create({
   timeCont: {
     fontSize: 10,
     textAlign: "right",
-    verticalAlign: "bottom",
+    textAlignVertical: "bottom",
     paddingLeft: 5,
   },
 });

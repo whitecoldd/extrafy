@@ -57,7 +57,6 @@ export default function Add({ navigation }) {
   const takePic = async () => {
     if (shot) {
       const data = await shot.takePictureAsync(null);
-      console.log(data.uri);
       setImage(data.uri);
     }
   };

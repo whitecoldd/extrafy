@@ -7,7 +7,6 @@ import "firebase/compat/firestore";
 import "firebase/compat/storage";
 
 const Save = (props) => {
-  console.log(props.route.params.image);
   const uri = props.route.params.image;
   const childPath = `post/${
     firebase.auth().currentUser.uid

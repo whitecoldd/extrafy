@@ -46,7 +46,6 @@ const Stack = createNativeStackNavigator();
 export default function App(props, { navigation }) {
   const [loaded, setLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
-  console.log(props)
   const auth = firebase.auth();
   useEffect(() => {
     auth.onAuthStateChanged((user) => {

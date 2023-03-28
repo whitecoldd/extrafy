@@ -37,26 +37,73 @@ export function fetchUser() {
   };
 }
 
-export function fetchUserChats() {
-  return (dispatch) => {
-    firebase
-      .firestore()
-      .collection("chats")
-      .where("users", "array-contains", firebase.auth().currentUser.uid)
-      .onSnapshot((snapshot) => {
-        let chats = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          const id = doc.id;
-          return { id, ...data };
-        });
-        console.log(chats);
-        dispatch({ type: USER_CHATS_STATE_CHANGE, chats });
-        for (let i = 0; i < chats.length; i++) {
-          dispatch(fetchUsersMessages(chats[i].id));
-        }
+// export function fetchUserChats() {
+//   return (dispatch) => {
+//     const chats = [];
+
+//     firebase
+//       .firestore()
+//       .collection("chats")
+//       .where("participants", "array-contains", firebase.auth().currentUser.uid)
+//       .get()
+//       .then((snapshot) => {
+//         snapshot.forEach((doc) => {
+//           console.log(snapshot);
+//           const chatId = doc.id;
+//           const chat = doc.data();
+//           const participants = chat.participants;
+//           const otherParticipant = participants.find(
+//             (participant) => participant !== firebase.auth().currentUser.uid
+//           );
+//           const otherUserRef = firebase.firestore().collection("users").doc(otherParticipant);
+//           otherUserRef.get().then((doc) => {
+//             const otherUser = doc.data();
+//             const chatWithOtherUser = {
+//               id: chatId,
+//               user: {
+//                 uid: otherUser.uid,
+//                 username: otherUser.username,
+//               },
+//               chatId,
+//             };
+//             chats.push(chatWithOtherUser);
+//             console.log(chats);
+//             dispatch({ type: USER_CHATS_STATE_CHANGE, chats: chats });
+//           });
+//         });
+//       });
+//   };
+// }
+
+export const fetchUserChats = () => {
+  return async (dispatch) => {
+    try {
+      const currentUser = firebase.auth().currentUser;
+      const chatsRef = firebase.firestore().collection("chats");
+      const snapshot = await chatsRef
+        .where(
+          "participants",
+          "array-contains",
+          firebase.auth().currentUser.uid
+        )
+        .get();
+
+      const chats = snapshot.docs.map((doc) => {
+        const id = doc.id;
+        const users = Object.keys(doc.data().users).filter(
+          (uid) => uid !== currentUser.uid
+        );
+        const chatId = users[0] + "_" + currentUser.uid;
+        return { id, chatId };
       });
+      console.log(snapshot);
+
+      dispatch({ type: USER_CHATS_STATE_CHANGE, chats });
+    } catch (error) {
+      dispatch({ type: "FETCH_CHATS_ERROR", payload: error.message });
+    }
   };
-}
+};
 
 export function fetchUsersMessages(chatId) {
   return (dispatch) => {
@@ -72,7 +119,6 @@ export function fetchUsersMessages(chatId) {
           const id = doc.id;
           return { id, ...data };
         });
-        console.log(messages);
         dispatch({ type: USER_MESSAGES_STATE_CHANGE, messages, chatId });
       });
   };
@@ -114,7 +160,6 @@ export function fetchUserPosts() {
           const id = doc.id;
           return { id, ...data };
         });
-        console.log(posts);
         dispatch({ type: USER_POSTS_STATE_CHANGE, posts });
       });
   };
@@ -131,7 +176,6 @@ export function fetchUserFollows() {
           const id = doc.id;
           return id;
         });
-        console.log(follows);
         dispatch({ type: USER_FOLLOWS_STATE_CHANGE, follows });
         for (let i = 0; i < follows.length; i++) {
           dispatch(fetchUsersData(follows[i], true));
@@ -178,7 +222,6 @@ export function fetchUsersFollowsPosts(uid) {
       .get()
       .then((snapshot) => {
         const uid = snapshot.docs[0].ref.path.split("/")[1];
-        console.log(uid);
         const user = getState().usersState.users.find((el) => el.uid === uid);
 
         let posts = snapshot.docs.map((doc) => {
@@ -204,7 +247,6 @@ export function fetchUsersFollowsLikes(uid, postId) {
       .collection("likes")
       .doc(firebase.auth().currentUser.uid)
       .onSnapshot((snapshot) => {
-        console.log(snapshot);
         const postId = snapshot._delegate._key.path.segments[3];
         let currentUserLike = false;
         if (snapshot.exists) {
