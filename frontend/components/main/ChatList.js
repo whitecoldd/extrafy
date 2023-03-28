@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,27 +7,34 @@ import {
   FlatList,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserChats } from "../../redux/actions/index.js";
-
+import {
+  fetchUserFollows,
+  fetchUsersChats,
+} from "../../redux/actions/index.js";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
+import "firebase/compat/auth";
 const ChatList = ({ navigation }) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
-  const chats = useSelector((state) => state.userState.chats);
 
+  const follows = useSelector((state) => state.userState.follows);
+  const users = useSelector((state) => state.usersState.users);
+  const [newUsers, setNewUsers] = useState([]);
   useEffect(() => {
-    dispatch(fetchUserChats());
+    dispatch(fetchUsersChats());
+    dispatch(fetchUserFollows());
   }, []);
+  console.log(users);
+  console.log(follows);
 
   const onPressChat = (user) => {
     navigation.navigate("Chat", { user });
   };
 
-  console.log(chats);
-
   const renderChat = ({ item }) => {
-    const otherUser = item.users.filter(
-      (user) => user.uid !== currentUser.uid
-    )[0];
+    const otherUser = users.filter((member) => member.uid === item)[0];
+    console.log(otherUser);
     return (
       <TouchableOpacity
         style={styles.chatContainer}
@@ -40,9 +47,9 @@ const ChatList = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {chats.length !== 0 ? (
+      {follows.length !== 0 ? (
         <FlatList
-          data={chats}
+          data={follows}
           renderItem={renderChat}
           keyExtractor={(item) => item.id}
         />

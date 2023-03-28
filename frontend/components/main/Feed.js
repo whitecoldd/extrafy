@@ -62,26 +62,37 @@ const Feed = (props) => {
           data={posts}
           renderItem={({ item }) => (
             <View>
-              <View style={styles.imgContainer}>
+              <View>
                 <Text style={styles.userContainer}>{item.user.username}</Text>
                 <Image
                   style={styles.image}
                   source={{ uri: item.downloadURL }}
                 />
+                <Text style={styles.userContainer1}>{item.caption}</Text>
               </View>
               <View style={styles.likeAndComment}>
                 {item.currentUserLike ? (
                   <TouchableOpacity
                     onPress={() => onDislike(item.user.uid, item.id)}
                   >
-                    <FontAwesome style={styles.icon} name="heart" size={24} color="#ab87ff" />
+                    <FontAwesome
+                      style={styles.icon}
+                      name="heart"
+                      size={24}
+                      color="#ab87ff"
+                    />
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
                     title="Like"
                     onPress={() => onLike(item.user.uid, item.id)}
                   >
-                    <FontAwesome style={styles.icon} name="heart-o" size={24} color="#ab87ff" />
+                    <FontAwesome
+                      style={styles.icon}
+                      name="heart-o"
+                      size={24}
+                      color="#ab87ff"
+                    />
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
@@ -119,7 +130,15 @@ const styles = StyleSheet.create({
     fontSize: 22,
     borderTopEndRadius: 10,
     borderTopStartRadius: 10,
-    overflow: "hidden"
+    overflow: "hidden",
+  },
+  userContainer1: {
+    backgroundColor: "#ab87ff",
+    padding: 5,
+    fontSize: 22,
+    borderBottomEndRadius: 10,
+    borderBottomStartRadius: 10,
+    overflow: "hidden",
   },
   icon: {
     marginRight: 15,

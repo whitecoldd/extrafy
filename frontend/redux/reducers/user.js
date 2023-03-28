@@ -34,10 +34,11 @@ export const user = (state = initialState, action) => {
         ...state,
         follows: action.follows,
       };
+    //TO DO
     case USER_CHATS_STATE_CHANGE: {
       return {
         ...state,
-        chats: [...state.chats, ...action.chats],
+        chats: action.chats,
       };
     }
     case USER_MESSAGES_STATE_CHANGE: {

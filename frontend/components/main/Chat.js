@@ -33,7 +33,7 @@ const Chat = (props) => {
 
   const onSendMessage = () => {
     if (text.length > 0) {
-      dispatch(sendMessage(chatId, text));
+      dispatch(sendMessage(chatId, text, user.uid));
       setText("");
     }
   };

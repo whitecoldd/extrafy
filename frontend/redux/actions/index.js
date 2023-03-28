@@ -1,6 +1,6 @@
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
-import "firebase/auth";
+import "firebase/compat/auth";
 import {
   USER_STATE_CHANGE,
   USER_POSTS_STATE_CHANGE,
@@ -75,35 +75,24 @@ export function fetchUser() {
 //   };
 // }
 
-export const fetchUserChats = () => {
-  return async (dispatch) => {
-    try {
-      const currentUser = firebase.auth().currentUser;
-      const chatsRef = firebase.firestore().collection("chats");
-      const snapshot = await chatsRef
-        .where(
-          "participants",
-          "array-contains",
-          firebase.auth().currentUser.uid
-        )
-        .get();
+export function fetchUsersChats() {
+  return (dispatch) => {
+    firebase
+      .firestore()
+      .collection("chats")
+      .onSnapshot((snapshot) => {
+        console.log(snapshot);
+        let chats = snapshot.docs.map((doc) => {
+          const id = doc.id;
+          console.log(id);
+          console.log("success");
+          return id;
+        });
 
-      const chats = snapshot.docs.map((doc) => {
-        const id = doc.id;
-        const users = Object.keys(doc.data().users).filter(
-          (uid) => uid !== currentUser.uid
-        );
-        const chatId = users[0] + "_" + currentUser.uid;
-        return { id, chatId };
+        dispatch({ type: USER_CHATS_STATE_CHANGE, chats: chats });
       });
-      console.log(snapshot);
-
-      dispatch({ type: USER_CHATS_STATE_CHANGE, chats });
-    } catch (error) {
-      dispatch({ type: "FETCH_CHATS_ERROR", payload: error.message });
-    }
   };
-};
+}
 
 export function fetchUsersMessages(chatId) {
   return (dispatch) => {
@@ -124,7 +113,7 @@ export function fetchUsersMessages(chatId) {
   };
 }
 
-export function sendMessage(chatId, message) {
+export function sendMessage(chatId, message, otherUserId) {
   return (dispatch) => {
     firebase
       .firestore()
@@ -134,6 +123,7 @@ export function sendMessage(chatId, message) {
       .add({
         text: message,
         sender: firebase.auth().currentUser.uid,
+        receiver: otherUserId,
         created_at: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(() => {
