@@ -9,10 +9,13 @@ import React, { useState } from "react";
 
 import firebase from "firebase/compat/app";
 import { Snackbar } from "react-native-paper";
+
+import { Feather } from "@expo/vector-icons";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isValid, setIsValid] = useState(true);
+  const [seePass, setSeePass] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
     firebase
@@ -56,14 +59,23 @@ const Login = () => {
         autoCapitalize="none"
         onChangeText={(email) => setEmail(email)}
       />
-      <TextInput
-        style={styles.searchBox}
-        placeholder="password"
-        name="password"
-        autoCapitalize="none"
-        secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
-      />
+      <View style={styles.searchBox}>
+        <TextInput
+          placeholder="password"
+          name="password"
+          autoCapitalize="none"
+          secureTextEntry={seePass ? false : true}
+          onChangeText={(password) => setPassword(password)}
+        />
+        <TouchableOpacity onPress={() => setSeePass(!seePass)}>
+          {!seePass ? (
+            <Feather name="eye" size={24} color="black" />
+          ) : (
+            <Feather name="eye-off" size={24} color="black" />
+          )}
+        </TouchableOpacity>
+      </View>
+
       <TouchableOpacity style={styles.btnBox} onPress={handleSubmit}>
         <Text style={{ color: "#FFFFE0" }}>Sign In!</Text>
       </TouchableOpacity>

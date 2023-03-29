@@ -13,7 +13,7 @@ import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/auth";
-import { FontAwesome5, AntDesign, FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 const Feed = (props) => {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
@@ -21,11 +21,16 @@ const Feed = (props) => {
       props.usersFollowsLoaded === props.follows.length &&
       props.follows.length !== 0
     ) {
-      [...props.feed].sort(function (x, y) {
-        return x.created_at - y.created_at;
+      const sortedFeed = [...props.feed].sort(function (x, y) {
+        return y.created_at - x.created_at;
       });
-
-      setPosts(props.feed);
+      const uniqueFeed = sortedFeed.filter((post, index) => {
+        const firstIndex = sortedFeed.findIndex(
+          (p) => p.id === post.id && p.user.uid === post.user.uid
+        );
+        return index === firstIndex;
+      });
+      setPosts(uniqueFeed);
     }
   }, [props.usersFollowsLoaded, props.feed]);
 
@@ -51,7 +56,6 @@ const Feed = (props) => {
       .doc(firebase.auth().currentUser.uid)
       .delete();
   };
-
 
   return (
     <View style={styles.container}>

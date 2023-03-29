@@ -20,7 +20,6 @@ const ChatList = ({ navigation }) => {
 
   const follows = useSelector((state) => state.userState.follows);
   const users = useSelector((state) => state.usersState.users);
-  const [newUsers, setNewUsers] = useState([]);
   useEffect(() => {
     dispatch(fetchUsersChats());
     dispatch(fetchUserFollows());
@@ -40,7 +39,7 @@ const ChatList = ({ navigation }) => {
         style={styles.chatContainer}
         onPress={() => onPressChat(otherUser)}
       >
-        <Text style={styles.chatUsername}>{otherUser.username}</Text>
+        <Text style={styles.chatUsername}>{otherUser?.username}</Text>
       </TouchableOpacity>
     );
   };
@@ -51,7 +50,7 @@ const ChatList = ({ navigation }) => {
         <FlatList
           data={follows}
           renderItem={renderChat}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item}
         />
       ) : (
         <Text>No chats yet</Text>

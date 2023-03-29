@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
@@ -16,6 +16,8 @@ import SearchScreen from "./main/Search.js";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import ChatListScreen from "./main/ChatList.js";
+import { TouchableOpacity } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -36,6 +38,17 @@ const Main = (props) => {
   // if (currentUser == undefined) {
   //   return <Loading />;
   // }
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Map")}
+        >
+          <FontAwesome name="map-marker" size={24} color="black" />
+        </TouchableOpacity>
+      ),
+    });
+  }, []);
 
   return (
     <Tab.Navigator

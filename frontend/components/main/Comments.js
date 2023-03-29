@@ -15,12 +15,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchUsersData } from "../../redux/actions";
-import Loading from "../Loading";
+import { Snackbar } from "react-native-paper";
 
 const Comments = (props) => {
   const [comments, setComments] = useState([]);
   const [postId, setPostId] = useState("");
   const [comment, setComment] = useState("");
+  const [IsValid, setIsValid] = useState(true);
   useEffect(() => {
     function matchUserToComment(comments) {
       for (let i = 0; i < comments.length; i++) {
@@ -44,6 +45,7 @@ const Comments = (props) => {
         .collection("userPosts")
         .doc(props.route.params.postId)
         .collection("comments")
+        .orderBy("created_at", "desc")
         .get()
         .then((snapshot) => {
           let comments = snapshot.docs.map((doc) => {
@@ -57,20 +59,30 @@ const Comments = (props) => {
     } else {
       matchUserToComment(comments);
     }
-  }, [props.route.params.postId, props.users, comments]);
+  }, [props.route.params.postId, props.users]);
 
   const onCommentSend = () => {
-    firebase
-      .firestore()
-      .collection("posts")
-      .doc(props.route.params.uid)
-      .collection("userPosts")
-      .doc(props.route.params.postId)
-      .collection("comments")
-      .add({
-        userid: firebase.auth().currentUser.uid,
-        comment,
+    if (comment !== "") {
+      firebase
+        .firestore()
+        .collection("posts")
+        .doc(props.route.params.uid)
+        .collection("userPosts")
+        .doc(props.route.params.postId)
+        .collection("comments")
+        .add({
+          userid: firebase.auth().currentUser.uid,
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          comment,
+        });
+      setComment("");
+    } else {
+      setIsValid({
+        bool: true,
+        boolSnack: true,
+        message: "Comment can't be empty",
       });
+    }
   };
 
   // if(comments.user == undefined){
@@ -95,12 +107,12 @@ const Comments = (props) => {
       <View style={styles.commentSendBox}>
         <TextInput
           placeholder="Write a comment..."
-          onChangeText={(comment) => setComment(comment)}
+          onChangeText={(value) => setComment(value)}
           style={styles.inputBox}
           multiline
           editable
+          value={comment}
           autoCapitalize="sentences"
-          aria-busy
         />
         <TouchableOpacity onPress={() => onCommentSend()}>
           <MaterialCommunityIcons
@@ -109,6 +121,15 @@ const Comments = (props) => {
             color={"#ab87ff"}
           />
         </TouchableOpacity>
+        <Snackbar
+          visible={IsValid.boolSnack}
+          duration={2000}
+          onDismiss={() => {
+            setIsValid({ boolSnack: false });
+          }}
+        >
+          {IsValid.message}
+        </Snackbar>
       </View>
     </View>
   );
@@ -136,7 +157,6 @@ const styles = StyleSheet.create({
   inputBox: {
     height: 40,
     borderRadius: 10,
-    paddingTop: 10,
     fontSize: 16,
     width: "90%",
   },

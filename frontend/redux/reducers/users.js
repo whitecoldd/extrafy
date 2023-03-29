@@ -21,7 +21,7 @@ export const users = (state = initialState, action) => {
     case USERS_POSTS_STATE_CHANGE:
       return {
         ...state,
-        usersFollowsLoaded: state.usersFollowsLoaded + 1,
+        usersFollowsLoaded: state.usersFollowsLoaded + 0.5,
         feed: [...state.feed, ...action.posts],
       };
     case USERS_LIKES_STATE_CHANGE:

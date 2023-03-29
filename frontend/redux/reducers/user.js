@@ -45,6 +45,7 @@ export const user = (state = initialState, action) => {
       return {
         ...state,
         messages: action.messages,
+        chats: [...state.chats, action.payload],
       };
     }
     case USER_MESSAGE_STATE_CHANGE: {
@@ -52,8 +53,10 @@ export const user = (state = initialState, action) => {
         ...state,
         messages: [...state.messages, ...action.messages],
         chatId: state.chatId,
+        chats: [...state.chats, action.payload],
       };
     }
+    
     case CLEAR_DATA:
       return initialState;
     default:

@@ -9,11 +9,14 @@ import {
 import React, { useState } from "react";
 import { Snackbar } from "react-native-paper";
 import firebase from "firebase/compat/app";
+import { Feather } from "@expo/vector-icons";
+
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isValid, setIsValid] = useState(true);
+  const [seePass, setSeePass] = useState(false);
   const handleSubmit = (e) => {
     e.preventDefault();
     if (username.length == 0 || email.length == 0 || password.length == 0) {
@@ -106,14 +109,22 @@ const Register = () => {
         autoCapitalize="none"
         onChangeText={(email) => setEmail(email)}
       />
-      <TextInput
-        style={styles.searchBox}
-        placeholder="password"
-        name="password"
-        autoCapitalize="none"
-        secureTextEntry={true}
-        onChangeText={(password) => setPassword(password)}
-      />
+      <View style={styles.searchBox}>
+        <TextInput
+          placeholder="password"
+          name="password"
+          autoCapitalize="none"
+          secureTextEntry={seePass ? false : true}
+          onChangeText={(password) => setPassword(password)}
+        />
+        <TouchableOpacity onPress={() => setSeePass(!seePass)}>
+          {!seePass ? (
+            <Feather name="eye" size={24} color="black" />
+          ) : (
+            <Feather name="eye-off" size={24} color="black" />
+          )}
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity style={styles.btnBox} onPress={handleSubmit}>
         <Text style={{ color: "#FFFFE0" }}>Sign Up!</Text>
       </TouchableOpacity>
@@ -154,6 +165,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "70%",
   },
+
 });
 
 export default Register;

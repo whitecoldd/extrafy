@@ -84,12 +84,12 @@ export function fetchUsersChats() {
         console.log(snapshot);
         let chats = snapshot.docs.map((doc) => {
           const id = doc.id;
-          console.log(id);
-          console.log("success");
           return id;
         });
-
-        dispatch({ type: USER_CHATS_STATE_CHANGE, chats: chats });
+        dispatch({ type: USER_CHATS_STATE_CHANGE, chats });
+        for (let i = 0; i < chats.length; i++) {
+          dispatch(fetchUsersData(chats[i], true));
+        }
       });
   };
 }
@@ -108,7 +108,12 @@ export function fetchUsersMessages(chatId) {
           const id = doc.id;
           return { id, ...data };
         });
-        dispatch({ type: USER_MESSAGES_STATE_CHANGE, messages, chatId });
+        dispatch({
+          type: USER_MESSAGES_STATE_CHANGE,
+          messages,
+          chatId,
+          chatId,
+        });
       });
   };
 }
@@ -127,13 +132,20 @@ export function sendMessage(chatId, message, otherUserId) {
         created_at: firebase.firestore.FieldValue.serverTimestamp(),
       })
       .then(() => {
-        dispatch({ type: USER_MESSAGE_STATE_CHANGE, message, chatId });
+        dispatch({
+          type: USER_MESSAGE_STATE_CHANGE,
+          message,
+          chatId,
+          otherUserId,
+        });
       })
       .catch((error) => {
         console.log(error);
       });
   };
 }
+
+
 
 export function fetchUserPosts() {
   return (dispatch) => {
