@@ -6,16 +6,22 @@ import {
   StyleSheet,
   Button,
   TouchableOpacity,
+  Animated,
+  Dimensions,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-
+import { LinearGradient } from "expo-linear-gradient";
 import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/auth";
 import { FontAwesome } from "@expo/vector-icons";
+
+const windowHeight = Dimensions.get("window").height;
+
 const Feed = (props) => {
   const [posts, setPosts] = useState([]);
+  console.log(windowHeight);
   useEffect(() => {
     if (
       props.usersFollowsLoaded === props.follows.length &&
@@ -56,69 +62,110 @@ const Feed = (props) => {
       .doc(firebase.auth().currentUser.uid)
       .delete();
   };
+  //#fff07d #ab87ff
+  const [scrollY] = useState(new Animated.Value(0));
+  const [isAboveHalf, setIsAboveHalf] = useState(false);
 
+  useEffect(() => {
+    const listenerId = scrollY.addListener(({ value }) => {
+      setIsAboveHalf(value < windowHeight / 2);
+    });
+    return () => {
+      scrollY.removeListener(listenerId);
+    };
+  }, [scrollY]);
   return (
     <View style={styles.container}>
-      <View style={styles.gallery}>
-        <FlatList
-          numColumns={1}
-          horizontal={false}
-          data={posts}
-          renderItem={({ item }) => (
-            <View>
-              <View>
-                <Text style={styles.userContainer}>{item.user.username}</Text>
-                <Image
-                  style={styles.image}
-                  source={{ uri: item.downloadURL }}
-                />
-                <Text style={styles.userContainer1}>{item.caption}</Text>
-              </View>
-              <View style={styles.likeAndComment}>
-                {item.currentUserLike ? (
+      <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
+        <View style={styles.container}>
+          <Animated.FlatList
+            numColumns={1}
+            horizontal={false}
+            data={posts}
+            // contentContainerStyle={styles.scrollViewContent}
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              {
+                useNativeDriver: true,
+              }
+            )}
+            renderItem={({ item }) => (
+              <View style={styles.postContainer}>
+                <View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      padding: 10,
+                      alignItems: "center",
+                      alignContent: "center",
+                    }}
+                  >
+                    <View style={{ borderRadius: 30, overflow: "hidden" }}>
+                      <Image
+                        style={{ flex: 1, aspectRatio: 1 / 1 }}
+                        source={{ uri: item.user.pfp }}
+                      />
+                    </View>
+                    <Text style={styles.userContainer}>
+                      {item.user.username}
+                    </Text>
+                  </View>
+
+                  <View style={styles.imgContainer}>
+                    <Image
+                      style={styles.image}
+                      source={{ uri: item.downloadURL }}
+                    />
+                  </View>
+
+                  <Text style={styles.userContainer}>{item.caption}</Text>
+                </View>
+                <View style={styles.likeAndComment}>
+                  {item.currentUserLike ? (
+                    <TouchableOpacity
+                      onPress={() => onDislike(item.user.uid, item.id)}
+                    >
+                      <FontAwesome
+                        style={styles.icon}
+                        name="heart"
+                        size={24}
+                        color={isAboveHalf ? "#fff07d" : "#ab87ff"}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      title="Like"
+                      onPress={() => onLike(item.user.uid, item.id)}
+                    >
+                      <FontAwesome
+                        style={styles.icon}
+                        name="heart-o"
+                        size={24}
+                        color={isAboveHalf ? "#fff07d" : "#ab87ff"}
+                      />
+                    </TouchableOpacity>
+                  )}
                   <TouchableOpacity
-                    onPress={() => onDislike(item.user.uid, item.id)}
+                    onPress={() =>
+                      props.navigation.navigate("Comments", {
+                        postId: item.id,
+                        uid: item.user.uid,
+                      })
+                    }
                   >
                     <FontAwesome
-                      style={styles.icon}
-                      name="heart"
-                      size={24}
-                      color="#ab87ff"
+                      style={styles.iconComm}
+                      name="comments-o"
+                      size={28}
+                      color={isAboveHalf ? "#fff07d" : "#ab87ff"}
                     />
                   </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    title="Like"
-                    onPress={() => onLike(item.user.uid, item.id)}
-                  >
-                    <FontAwesome
-                      style={styles.icon}
-                      name="heart-o"
-                      size={24}
-                      color="#ab87ff"
-                    />
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  onPress={() =>
-                    props.navigation.navigate("Comments", {
-                      postId: item.id,
-                      uid: item.user.uid,
-                    })
-                  }
-                >
-                  <FontAwesome
-                    style={styles.iconComm}
-                    name="comments-o"
-                    size={28}
-                    color="#ab87ff"
-                  />
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
-        />
-      </View>
+            )}
+          />
+        </View>
+      </LinearGradient>
     </View>
   );
 };
@@ -126,22 +173,15 @@ const Feed = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0e6ef",
+  },
+  postContainer: {
+    borderRadius: 10,
   },
   userContainer: {
-    backgroundColor: "#ab87ff",
     padding: 5,
+    marginLeft: 5,
+    marginBottom: 5,
     fontSize: 22,
-    borderTopEndRadius: 10,
-    borderTopStartRadius: 10,
-    overflow: "hidden",
-  },
-  userContainer1: {
-    backgroundColor: "#ab87ff",
-    padding: 5,
-    fontSize: 22,
-    borderBottomEndRadius: 10,
-    borderBottomStartRadius: 10,
     overflow: "hidden",
   },
   icon: {
@@ -151,6 +191,7 @@ const styles = StyleSheet.create({
   likeAndComment: {
     marginTop: 10,
     marginBottom: 10,
+    marginLeft: 7,
     justifyContent: "flex-start",
     flexDirection: "row",
     alignItems: "center",
@@ -161,7 +202,6 @@ const styles = StyleSheet.create({
   info: {
     margin: 10,
   },
-  gallery: { flex: 1 },
   image: {
     flex: 1,
     aspectRatio: 1,
@@ -169,11 +209,10 @@ const styles = StyleSheet.create({
   btn: {
     flex: 1 / 5,
   },
-  // imgContainer: {
-  //   borderRadius: 10,
-  //   borderColor: "black",
-  //   overflow: "hidden"
-  // },
+  imgContainer: {
+    borderRadius: 10,
+    overflow: "hidden",
+  },
 });
 
 const mapStateToProps = (store) => ({

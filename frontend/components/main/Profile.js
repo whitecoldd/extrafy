@@ -12,9 +12,10 @@ import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome5 } from "@expo/vector-icons";
 
 import Loading from "../Loading";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Profile = (props) => {
   const [userPosts, setUserPosts] = useState([]);
@@ -99,7 +100,7 @@ const Profile = (props) => {
   }
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
       <View
         style={
           props.route.params.uid !== firebase.auth().currentUser.uid
@@ -107,6 +108,12 @@ const Profile = (props) => {
             : styles.infoSelf
         }
       >
+        <View style={{ borderRadius: 30, overflow: "hidden" }}>
+          <Image
+            style={{ flex: 1, aspectRatio: 1/1 }}
+            source={{ uri: user.pfp }}
+          />
+        </View>
         <View>
           <Text>{user.username}</Text>
           <Text>{user.email}</Text>
@@ -130,9 +137,14 @@ const Profile = (props) => {
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity onPress={() => onLogout()}>
-            <MaterialCommunityIcons name="logout" size={24} color="#ab87ff" />
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity onPress={() => onLogout()}>
+              <MaterialCommunityIcons name="logout" size={24} color="#ab87ff" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => props.navigation.navigate("Edit")}>
+              <FontAwesome5 name="edit" size={24} color="#ab87ff" />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
       <View style={styles.gallery}>
@@ -147,14 +159,13 @@ const Profile = (props) => {
           )}
         />
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0e6ef",
   },
   info: {
     flex: 1 / 5,

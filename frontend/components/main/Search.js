@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Search = ({ navigation }) => {
   const [users, setUsers] = useState([]);
@@ -32,7 +33,7 @@ const Search = ({ navigation }) => {
 
   const onSearch = () => {};
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
       <View style={styles.searchBox}>
         <TextInput
           placeholder="Search"
@@ -50,7 +51,7 @@ const Search = ({ navigation }) => {
         numColumns={1}
         horizontal={false}
         data={users}
-        style={styles.dropdown}
+        // style={styles.dropdown}
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => navigation.navigate("Profile", { uid: item.id })}
@@ -59,7 +60,7 @@ const Search = ({ navigation }) => {
           </TouchableOpacity>
         )}
       />
-    </View>
+    </LinearGradient>
   );
 };
 

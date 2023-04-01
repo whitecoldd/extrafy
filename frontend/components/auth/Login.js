@@ -11,6 +11,7 @@ import firebase from "firebase/compat/app";
 import { Snackbar } from "react-native-paper";
 
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,14 +35,7 @@ const Login = () => {
       });
   };
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f0e6ef",
-      }}
-    >
+    <LinearGradient colors={["#b69ccb", "#fcfac9"]} style={styles.container}>
       <Text
         style={{
           textAlign: "center",
@@ -88,7 +82,7 @@ const Login = () => {
       >
         {isValid.message}
       </Snackbar>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -115,6 +109,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     width: "70%",
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0e6ef",
   },
 });
 

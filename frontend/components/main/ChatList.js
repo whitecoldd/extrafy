@@ -14,6 +14,8 @@ import {
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/compat/auth";
+import { LinearGradient } from "expo-linear-gradient";
+
 const ChatList = ({ navigation }) => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.userState.currentUser);
@@ -45,24 +47,25 @@ const ChatList = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      {follows.length !== 0 ? (
-        <FlatList
-          data={follows}
-          renderItem={renderChat}
-          keyExtractor={(item) => item}
-        />
-      ) : (
-        <Text>No chats yet</Text>
-      )}
-    </View>
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
+      <View style={styles.container}>
+        {follows.length !== 0 ? (
+          <FlatList
+            data={follows}
+            renderItem={renderChat}
+            keyExtractor={(item) => item}
+          />
+        ) : (
+          <Text>No chats yet</Text>
+        )}
+      </View>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   chatContainer: {
     padding: 10,

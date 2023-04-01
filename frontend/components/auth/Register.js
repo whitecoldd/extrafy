@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { Snackbar } from "react-native-paper";
 import firebase from "firebase/compat/app";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -71,14 +72,7 @@ const Register = () => {
       });
   };
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f0e6ef",
-      }}
-    >
+    <LinearGradient colors={["#b69ccb", "#fcfac9"]} style={styles.container}>
       <Text
         style={{
           textAlign: "center",
@@ -137,7 +131,7 @@ const Register = () => {
       >
         {isValid.message}
       </Snackbar>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -165,7 +159,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "70%",
   },
-
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0e6ef",
+  },
 });
 
 export default Register;

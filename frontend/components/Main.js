@@ -56,8 +56,8 @@ const Main = (props) => {
       labeled={false}
       activeColor="#4a4063"
       shifting={false}
-      inactiveColor="#ab87ff"
-      barStyle={{ backgroundColor: "#f0e6ef" }}
+      inactiveColor="#fff07d"
+      barStyle={{ backgroundColor: "#b69ccb" }}
     >
       <Tab.Screen
         name="Feed"

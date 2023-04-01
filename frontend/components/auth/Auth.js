@@ -1,16 +1,10 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Auth({ navigation }) {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#f0e6ef",
-      }}
-    >
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
       <Text
         style={{
           textAlign: "center",
@@ -25,15 +19,15 @@ export default function Auth({ navigation }) {
         style={styles.btnBox}
         onPress={() => navigation.navigate("Register")}
       >
-        <Text style={{color: "#FFFFE0",}}>Register</Text>
+        <Text style={{ color: "#FFFFE0" }}>Register</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.btnBox}
         onPress={() => navigation.navigate("Login")}
       >
-        <Text style={{color: "#FFFFE0",}}>Login</Text>
+        <Text style={{ color: "#FFFFE0" }}>Login</Text>
       </TouchableOpacity>
-    </View>
+    </LinearGradient>
   );
 }
 const styles = StyleSheet.create({
@@ -48,5 +42,11 @@ const styles = StyleSheet.create({
     padding: 12,
     color: "#FFFFE0",
     marginTop: 5,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f0e6ef",
   },
 });

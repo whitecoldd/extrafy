@@ -18,6 +18,7 @@ import SaveScreen from "./components/main/Save";
 import CommentsScreen from "./components/main/Comments";
 import ChatScreen from "./components/main/Chat";
 import MapScreen from "./components/main/Map";
+import EditScreen from "./components/main/Edit";
 
 const store = configureStore({
   reducer: rootReducer,
@@ -81,7 +82,15 @@ export default function App(props, { navigation }) {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Main">
-            <Stack.Screen name="Main" component={MainScreen} />
+            <Stack.Screen
+              name="Main"
+              component={MainScreen}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
+            />
             {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
             <Stack.Screen
               name="Add"
@@ -106,6 +115,11 @@ export default function App(props, { navigation }) {
             <Stack.Screen
               name="Map"
               component={MapScreen}
+              navigation={navigation}
+            />
+            <Stack.Screen
+              name="Edit"
+              component={EditScreen}
               navigation={navigation}
             />
           </Stack.Navigator>
