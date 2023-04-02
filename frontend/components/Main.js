@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
@@ -38,17 +38,17 @@ const Main = (props) => {
   // if (currentUser == undefined) {
   //   return <Loading />;
   // }
+  const [title, setTitle] = useState("Feed");
   useLayoutEffect(() => {
     navigation.setOptions({
+      title: title,
       headerRight: () => (
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Map")}
-        >
+        <TouchableOpacity onPress={() => navigation.navigate("Map")}>
           <FontAwesome name="map-marker" size={24} color="black" />
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, [title]);
 
   return (
     <Tab.Navigator
@@ -62,6 +62,11 @@ const Main = (props) => {
       <Tab.Screen
         name="Feed"
         component={FeedScreen}
+        listeners={() => ({
+          tabPress: () => {
+            setTitle("Feed");
+          },
+        })}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
@@ -78,6 +83,11 @@ const Main = (props) => {
         name="Search"
         component={SearchScreen}
         navigation={navigation}
+        listeners={() => ({
+          tabPress: () => {
+            setTitle("Search");
+          },
+        })}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
@@ -94,6 +104,11 @@ const Main = (props) => {
         name="ChatList"
         component={ChatListScreen}
         navigation={navigation}
+        listeners={() => ({
+          tabPress: () => {
+            setTitle("Chats");
+          },
+        })}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
@@ -111,6 +126,7 @@ const Main = (props) => {
         component={ProfileScreen}
         listeners={({ navigation }) => ({
           tabPress: (e) => {
+            setTitle("Profile");
             e.preventDefault();
             navigation.navigate("Profile", {
               uid: firebase.auth().currentUser.uid,

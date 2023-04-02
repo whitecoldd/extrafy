@@ -16,12 +16,11 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/auth";
 import { FontAwesome } from "@expo/vector-icons";
-
-const windowHeight = Dimensions.get("window").height;
+import ImageColors from "react-native-image-colors";
 
 const Feed = (props) => {
+  console.log(ImageColors);
   const [posts, setPosts] = useState([]);
-  console.log(windowHeight);
   useEffect(() => {
     if (
       props.usersFollowsLoaded === props.follows.length &&
@@ -63,112 +62,124 @@ const Feed = (props) => {
       .delete();
   };
   //#fff07d #ab87ff
-  const [scrollY] = useState(new Animated.Value(0));
-  const [isAboveHalf, setIsAboveHalf] = useState(false);
+  const [btnColor, setBtnColor] = useState("#fff07d");
 
-  useEffect(() => {
-    const listenerId = scrollY.addListener(({ value }) => {
-      setIsAboveHalf(value < windowHeight / 2);
-    });
-    return () => {
-      scrollY.removeListener(listenerId);
-    };
-  }, [scrollY]);
   return (
     <View style={styles.container}>
       <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
         <View style={styles.container}>
-          <Animated.FlatList
+          <FlatList
             numColumns={1}
             horizontal={false}
             data={posts}
             // contentContainerStyle={styles.scrollViewContent}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              {
-                useNativeDriver: true,
-              }
-            )}
-            renderItem={({ item }) => (
-              <View style={styles.postContainer}>
-                <View>
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      padding: 10,
-                      alignItems: "center",
-                      alignContent: "center",
-                    }}
-                  >
-                    <View style={{ borderRadius: 30, overflow: "hidden" }}>
+            renderItem={({ item }) => {
+              // const handleColors = async () => {
+              //   const colors = await ImageColors?.getColors(item.downloadURL);
+              //   const backgroundColor =
+              //     colors.platform === "android"
+              //       ? colors.dominant
+              //       : colors.background;
+              //   const contrastColor = useContrastColor(backgroundColor);
+              //   setBtnColor(contrastColor);
+              // };
+              // handleColors();
+              return (
+                <View style={styles.postContainer}>
+                  <View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        padding: 10,
+                        alignItems: "center",
+                        alignContent: "center",
+                      }}
+                    >
+                      <View style={{ borderRadius: 30, overflow: "hidden" }}>
+                        <Image
+                          style={{ flex: 1, aspectRatio: 1 / 1 }}
+                          source={{ uri: item.user.pfp }}
+                        />
+                      </View>
+                      <Text style={styles.userContainer}>
+                        {item.user.username}
+                      </Text>
+                    </View>
+
+                    <View style={styles.imgContainer}>
                       <Image
-                        style={{ flex: 1, aspectRatio: 1 / 1 }}
-                        source={{ uri: item.user.pfp }}
+                        style={styles.image}
+                        source={{ uri: item.downloadURL }}
                       />
                     </View>
-                    <Text style={styles.userContainer}>
-                      {item.user.username}
-                    </Text>
-                  </View>
+                    <View style={styles.likeAndComment}>
+                      {item.currentUserLike ? (
+                        <TouchableOpacity
+                          style={styles.like}
+                          onPress={() => onDislike(item.user.uid, item.id)}
+                        >
+                          <FontAwesome
+                            style={styles.icon}
+                            name="heart"
+                            size={40}
+                            color={btnColor}
+                          />
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          title="Like"
+                          style={styles.like}
+                          onPress={() => onLike(item.user.uid, item.id)}
+                        >
+                          <FontAwesome
+                            style={styles.icon}
+                            name="heart-o"
+                            size={40}
+                            color={btnColor}
+                          />
+                        </TouchableOpacity>
+                      )}
+                      <TouchableOpacity
+                        style={styles.comment}
+                        onPress={() =>
+                          props.navigation.navigate("Comments", {
+                            postId: item.id,
+                            uid: item.user.uid,
+                          })
+                        }
+                      >
+                        <FontAwesome
+                          style={styles.iconComm}
+                          name="comments-o"
+                          size={44}
+                          color={btnColor}
+                        />
+                      </TouchableOpacity>
+                    </View>
 
-                  <View style={styles.imgContainer}>
-                    <Image
-                      style={styles.image}
-                      source={{ uri: item.downloadURL }}
-                    />
+                    <Text style={styles.userContainer}>{item.caption}</Text>
                   </View>
-
-                  <Text style={styles.userContainer}>{item.caption}</Text>
                 </View>
-                <View style={styles.likeAndComment}>
-                  {item.currentUserLike ? (
-                    <TouchableOpacity
-                      onPress={() => onDislike(item.user.uid, item.id)}
-                    >
-                      <FontAwesome
-                        style={styles.icon}
-                        name="heart"
-                        size={24}
-                        color={isAboveHalf ? "#fff07d" : "#ab87ff"}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity
-                      title="Like"
-                      onPress={() => onLike(item.user.uid, item.id)}
-                    >
-                      <FontAwesome
-                        style={styles.icon}
-                        name="heart-o"
-                        size={24}
-                        color={isAboveHalf ? "#fff07d" : "#ab87ff"}
-                      />
-                    </TouchableOpacity>
-                  )}
-                  <TouchableOpacity
-                    onPress={() =>
-                      props.navigation.navigate("Comments", {
-                        postId: item.id,
-                        uid: item.user.uid,
-                      })
-                    }
-                  >
-                    <FontAwesome
-                      style={styles.iconComm}
-                      name="comments-o"
-                      size={28}
-                      color={isAboveHalf ? "#fff07d" : "#ab87ff"}
-                    />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            )}
+              );
+            }}
           />
         </View>
       </LinearGradient>
     </View>
   );
 };
+
+// const useContrastColor = (color) => {
+//   const luminance = getLuminance(color);
+//   return luminance > 0.5 ? "#000000" : "#FFFFFF";
+// };
+
+// const getLuminance = (color) => {
+//   const [r, g, b] = color.match(/\w\w/g).map((c) => parseInt(c, 16));
+//   const [R, G, B] = [r / 255, g / 255, b / 255];
+//   const luminance = 0.2126 * R + 0.7152 * G + 0.0722 * B;
+//   return luminance;
+// };
 
 const styles = StyleSheet.create({
   container: {
@@ -188,14 +199,8 @@ const styles = StyleSheet.create({
     marginRight: 15,
     marginLeft: 5,
   },
-  likeAndComment: {
-    marginTop: 10,
-    marginBottom: 10,
-    marginLeft: 7,
-    justifyContent: "flex-start",
-    flexDirection: "row",
-    alignItems: "center",
-  },
+  like: { position: "absolute", top: -50, left: 5 },
+  comment: { position: "absolute", top: -53, right: 10 },
   iconComm: {
     marginBottom: 2,
   },
@@ -210,7 +215,7 @@ const styles = StyleSheet.create({
     flex: 1 / 5,
   },
   imgContainer: {
-    borderRadius: 10,
+    borderRadius: 20,
     overflow: "hidden",
   },
 });

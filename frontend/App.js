@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/reducers";
 import thunk from "redux-thunk";
+// import * as geofirestore from "geofirestore";
 
 import Loading from "./components/Loading";
 import AddScreen from "./components/main/Add";
@@ -38,11 +39,11 @@ const firebaseConfig = {
   appId: "1:1098605566918:web:27ace386c4e100a5c3f0c7",
   measurementId: "G-5V8N8EEZ87",
 };
-
+let db;
 if (firebase.apps.length === 0) {
-  firebase.initializeApp(firebaseConfig);
+  db = firebase.initializeApp(firebaseConfig);
 }
-
+// const geoFirestore = new geofirestore(db);
 const Stack = createNativeStackNavigator();
 
 export default function App(props, { navigation }) {
@@ -116,6 +117,7 @@ export default function App(props, { navigation }) {
               name="Map"
               component={MapScreen}
               navigation={navigation}
+              // geoFirestore={geoFirestore}
             />
             <Stack.Screen
               name="Edit"
