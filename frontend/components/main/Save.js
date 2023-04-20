@@ -1,5 +1,7 @@
-import { View, Text, Image, TextInput, Button } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import firebase from "firebase/compat/app";
 import "firebase/firestore";
 import "firebase/compat/auth";
@@ -57,14 +59,21 @@ const Save = (props) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <Image source={{ uri: uri }} />
-      <TextInput
-        placeholder="Caption goes here..."
-        onChangeText={(caption) => setCaption(caption)}
-      />
-      <Button title="Save post" onPress={() => uploadImg(uri)} />
-    </View>
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        <Image style={{ flex: 1, aspectRatio: 1 / 1 }} source={{ uri: uri }} />
+        <View style={{ flexDirection: "row", alignItems:'center' }}>
+          <TextInput
+            style={{ height: 80, width: '90%' }}
+            placeholder="   Caption goes here..."
+            onChangeText={(caption) => setCaption(caption)}
+          />
+          <TouchableOpacity onPress={() => uploadImg(uri)}>
+            <MaterialCommunityIcons name="publish" size={30} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    </LinearGradient>
   );
 };
 

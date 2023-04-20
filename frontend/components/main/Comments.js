@@ -6,6 +6,7 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import firebase from "firebase/compat/app";
@@ -16,6 +17,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchUsersData } from "../../redux/actions";
 import { Snackbar } from "react-native-paper";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Comments = (props) => {
   const [comments, setComments] = useState([]);
@@ -85,18 +87,19 @@ const Comments = (props) => {
     }
   };
 
-  // if(comments.user == undefined){
-  //   return <Loading/>
-  // }
-
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
+      <View style={{ flex: 1}}>
+        <Image
+          style={{ flex: 1 }}
+          source={{ uri: props.route.params.post.downloadURL }}
+        />
+      </View>
       <FlatList
         numColumns={1}
-        horizontal={false}
         data={comments}
         renderItem={({ item }) => (
-          <View>
+          <View style={{ flex: 1 }}>
             {item.user !== undefined ? (
               <Text style={styles.text}>{item.user?.username}</Text>
             ) : null}
@@ -118,7 +121,7 @@ const Comments = (props) => {
           <MaterialCommunityIcons
             name="send-circle"
             size={26}
-            color={"#ab87ff"}
+            color={"black"}
           />
         </TouchableOpacity>
         <Snackbar
@@ -131,7 +134,7 @@ const Comments = (props) => {
           {IsValid.message}
         </Snackbar>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
@@ -146,7 +149,6 @@ export default connect(mapStateToProps, mapDispatchProps)(Comments);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0e6ef",
   },
   text: {
     fontSize: 22,

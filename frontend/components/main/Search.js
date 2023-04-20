@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import firebase from "firebase/compat/app";
@@ -44,18 +45,23 @@ const Search = ({ navigation }) => {
           aria-busy
         />
         <TouchableOpacity onPress={() => onSearch()}>
-          <Ionicons name="search-circle" size={28} color="#ab87ff" />
+          <Ionicons name="search-circle" size={28} color="black" />
         </TouchableOpacity>
       </View>
       <FlatList
         numColumns={1}
-        horizontal={false}
         data={users}
-        // style={styles.dropdown}
         renderItem={({ item }) => (
           <TouchableOpacity
+            style={styles.userContainer}
             onPress={() => navigation.navigate("Profile", { uid: item.id })}
           >
+            <View style={{ borderRadius: 30, overflow: 'hidden' }}>
+              <Image
+                style={{ flex: 1, aspectRatio: 1/1  }}
+                source={{ uri: item?.pfp }}
+              />
+            </View>
             <Text style={styles.result}>{item.username}</Text>
           </TouchableOpacity>
         )}
@@ -69,13 +75,21 @@ export default Search;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0e6ef",
   },
   inputBox: {
     height: 40,
     borderRadius: 10,
     fontSize: 16,
     width: "90%",
+  },
+  userContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    height: 50,
   },
   searchBox: {
     borderRadius: 10,
@@ -88,11 +102,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
   },
-  dropdown: {
-    borderRadius: 10,
-    backgroundColor: "#ab87ff",
-  },
   result: {
     fontSize: 22,
+    paddingLeft: 10
   },
 });

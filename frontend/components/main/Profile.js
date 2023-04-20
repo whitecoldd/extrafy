@@ -110,13 +110,13 @@ const Profile = (props) => {
       >
         <View style={{ borderRadius: 30, overflow: "hidden" }}>
           <Image
-            style={{ flex: 1, aspectRatio: 1/1 }}
+            style={{ flex: 1, aspectRatio: 1 / 1 }}
             source={{ uri: user.pfp }}
           />
         </View>
         <View>
-          <Text>{user.username}</Text>
-          <Text>{user.email}</Text>
+          <Text style={styles.username}>{user.username}</Text>
+          <Text style={styles.name}>{user?.name}</Text>
         </View>
         {props.route.params.uid !== firebase.auth().currentUser.uid ? (
           <View style={styles.btnContainer1}>
@@ -139,10 +139,14 @@ const Profile = (props) => {
         ) : (
           <View>
             <TouchableOpacity onPress={() => onLogout()}>
-              <MaterialCommunityIcons name="logout" size={24} color="#ab87ff" />
+              <MaterialCommunityIcons name="logout" size={24} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => props.navigation.navigate("Edit")}>
-              <FontAwesome5 name="edit" size={24} color="#ab87ff" />
+            <TouchableOpacity
+              onPress={() =>
+                props.navigation.navigate("Edit", { pfp: user?.pfp })
+              }
+            >
+              <FontAwesome5 name="edit" size={24} color="black" />
             </TouchableOpacity>
           </View>
         )}
@@ -203,6 +207,15 @@ const styles = StyleSheet.create({
     padding: 8,
     color: "#FFFFE0",
     marginTop: 5,
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  name: {
+    fontSize: 16,
+    color: "#666",
   },
 });
 

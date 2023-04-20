@@ -19,7 +19,6 @@ import { FontAwesome } from "@expo/vector-icons";
 import ImageColors from "react-native-image-colors";
 
 const Feed = (props) => {
-  console.log(ImageColors);
   const [posts, setPosts] = useState([]);
   useEffect(() => {
     if (
@@ -62,7 +61,7 @@ const Feed = (props) => {
       .delete();
   };
   //#fff07d #ab87ff
-  const [btnColor, setBtnColor] = useState("#fff07d");
+  const [btnColor, setBtnColor] = useState("white");
 
   return (
     <View style={styles.container}>
@@ -72,18 +71,7 @@ const Feed = (props) => {
             numColumns={1}
             horizontal={false}
             data={posts}
-            // contentContainerStyle={styles.scrollViewContent}
             renderItem={({ item }) => {
-              // const handleColors = async () => {
-              //   const colors = await ImageColors?.getColors(item.downloadURL);
-              //   const backgroundColor =
-              //     colors.platform === "android"
-              //       ? colors.dominant
-              //       : colors.background;
-              //   const contrastColor = useContrastColor(backgroundColor);
-              //   setBtnColor(contrastColor);
-              // };
-              // handleColors();
               return (
                 <View style={styles.postContainer}>
                   <View>
@@ -145,6 +133,7 @@ const Feed = (props) => {
                           props.navigation.navigate("Comments", {
                             postId: item.id,
                             uid: item.user.uid,
+                            post: item
                           })
                         }
                       >

@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Image,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -26,8 +27,6 @@ const ChatList = ({ navigation }) => {
     dispatch(fetchUsersChats());
     dispatch(fetchUserFollows());
   }, []);
-  console.log(users);
-  console.log(follows);
 
   const onPressChat = (user) => {
     navigation.navigate("Chat", { user });
@@ -35,12 +34,18 @@ const ChatList = ({ navigation }) => {
 
   const renderChat = ({ item }) => {
     const otherUser = users.filter((member) => member.uid === item)[0];
-    console.log(otherUser);
+
     return (
       <TouchableOpacity
         style={styles.chatContainer}
         onPress={() => onPressChat(otherUser)}
       >
+        <View style={{ borderRadius: 30, overflow: "hidden" }}>
+          <Image
+            style={{ flex: 1, aspectRatio: 1 / 1 }}
+            source={{ uri: otherUser?.pfp }}
+          />
+        </View>
         <Text style={styles.chatUsername}>{otherUser?.username}</Text>
       </TouchableOpacity>
     );
@@ -71,10 +76,15 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    height: 50,
   },
   chatUsername: {
     fontWeight: "bold",
     fontSize: 16,
+    paddingLeft: 10,
   },
 });
 

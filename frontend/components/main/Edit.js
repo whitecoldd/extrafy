@@ -1,6 +1,5 @@
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-// import * as Updates from 'expo-updates';
 import firebase from "firebase/compat/app";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
@@ -11,8 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-//import { container, form, navbar, text, utils } from "../../styles";
-
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import "firebase/compat/firestore";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -45,7 +44,7 @@ function Edit(props) {
           //style={navbar.image}
           name="check"
           size={24}
-          color="green"
+          color="black"
           onPress={() => {
             console.log({ name, description });
             Save();
@@ -128,42 +127,73 @@ function Edit(props) {
         props.navigation.goBack();
       });
   };
+  console.log(props.route.params.pfp);
 
   return (
-    <View>
-      <TouchableOpacity
-        style={{ backgroundColor: "pink", marginBottom: 10, padding: 20 }}
-        onPress={() => pickImage()}
-      >
-        {image == "default" ? (
-          <FontAwesome5 name="user-circle" size={80} color="black" />
-        ) : (
-          <Image
-            source={{
-              uri: image,
-            }}
-          />
-        )}
-        <Text>Change Profile Photo</Text>
-      </TouchableOpacity>
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={{ flex: 1 }}>
+      <View style={{ flex: 1 / 3, flexDirection: "row" }}>
+        <View style={{ flex: 1 / 2, marginLeft: 10 }}>
+          {image === "default" ? (
+            <FontAwesome5 name="user-circle" size={80} color="black" />
+          ) : (
+            <View style={{ flex: 1, overflow: "hidden", margin: 10 }}>
+              <Image
+                style={{ flex: 1, aspectRatio: 1 / 1 }}
+                source={{ uri: image }}
+              />
+            </View>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={{
+            backgroundColor: "transparent",
+            margin: 10,
+            padding: 20,
+            borderRadius: 30,
+            flex: 1 / 2,
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center"
+          }}
+          onPress={() => pickImage()}
+        >
+          <MaterialCommunityIcons name="publish" size={44} color="black" />
+          <Text>Change Profile Photo</Text>
+        </TouchableOpacity>
+      </View>
 
       <TextInput
         value={name}
-        style={{ backgroundColor: "pink", marginBottom: 10, padding: 20 }}
+        style={{
+          borderWidth: 1,
+          borderColor: "black",
+          backgroundColor: "transparent",
+          margin: 10,
+          padding: 15,
+          borderRadius: 30,
+        }}
         placeholder="Name"
         onChangeText={(name) => setName(name)}
       />
       <TextInput
         value={description}
-        style={{ backgroundColor: "pink", marginBottom: 10, padding: 20 }}
-        placeholderTextColor={"#e8e8e8"}
+        style={{
+          borderWidth: 1,
+          borderColor: "black",
+          backgroundColor: "transparent",
+          margin: 10,
+          padding: 15,
+          borderRadius: 30,
+        }}
+        placeholderTextColor={"gray"}
         placeholder="Description"
         onChangeText={(description) => {
           setDescription(description);
         }}
       />
       <Button title="Logout" onPress={() => onLogout()} />
-    </View>
+    </LinearGradient>
   );
 }
 

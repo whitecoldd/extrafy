@@ -73,8 +73,16 @@ export default function App(props, { navigation }) {
             component={AuthScreen}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} options={{
+                headerStyle: {
+                  backgroundColor: "#b69ccb",
+                },
+              }} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{
+                headerStyle: {
+                  backgroundColor: "#b69ccb",
+                },
+              }} />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -97,32 +105,61 @@ export default function App(props, { navigation }) {
               name="Add"
               component={AddScreen}
               navigation={navigation}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
             />
             <Stack.Screen
               name="Save"
               component={SaveScreen}
               navigation={navigation}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
             />
             <Stack.Screen
               name="Comments"
               component={CommentsScreen}
               navigation={navigation}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
             />
             <Stack.Screen
               name="Chat"
               component={ChatScreen}
               navigation={navigation}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
             />
             <Stack.Screen
               name="Map"
               component={MapScreen}
               navigation={navigation}
-              // geoFirestore={geoFirestore}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
             />
             <Stack.Screen
               name="Edit"
               component={EditScreen}
               navigation={navigation}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
             />
           </Stack.Navigator>
         </NavigationContainer>

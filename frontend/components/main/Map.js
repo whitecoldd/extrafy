@@ -17,7 +17,31 @@ export default function MapScreen() {
   });
   const [errorMsg, setErrorMsg] = useState(null);
   const [users, setUsers] = useState([]);
+
   useEffect(() => {
+    const getUsersNearby = async (location) => {
+      const usersRef = geoFirestore.collection("users");
+      const query = usersRef.near({
+        center: new firebase.firestore.GeoPoint(
+          location.latitude,
+          location.longitude
+        ),
+        radius: 10000000,
+      });
+      console.log(query);
+      query.get().then((querySnapshot) => {
+        console.log("querySnapshot size: ", querySnapshot.size);
+        const users = [];
+        querySnapshot.forEach((documentSnapshot) => {
+          const userLocation = documentSnapshot.get("location");
+          const user = { id: documentSnapshot.id, location: userLocation };
+          users.push(user);
+        });
+        console.log("users: ", users);
+        setUsers(users);
+      });
+    };
+
     const getLocationAsync = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
@@ -42,7 +66,6 @@ export default function MapScreen() {
           latitude,
           longitude,
         });
-        console.log(location);
         return location;
       } else {
         console.warn("Cannot get user location");
@@ -50,41 +73,26 @@ export default function MapScreen() {
     };
 
     if (firebase.auth().currentUser) {
-      getLocationAsync();
+      Promise.all([getLocationAsync()]).then(([location]) =>
+        getUsersNearby(location.coords)
+      );
     }
-  }, [firebase.auth().currentUser]);
-  const usersRef = geoFirestore.collection("users");
-  const query = usersRef.near({
-    center: new firebase.firestore.GeoPoint(
-      userLocation.latitude,
-      userLocation.longitude
-    ),
-    radius: 10, // in kilometers
-  });
-  // query.on("key_entered", async (key, documentSnapshot, distance) => {
-  //   const userLocation = await documentSnapshot.get("location");
-  //   const user = { id: key, location: userLocation };
-  //   setUsers((prevUsers) => [...prevUsers, user]);
-  // });
-  // query.on("key_entered", async (key, document, distance) => {
-  //   console.log(key, document, distance);
-  //   const userLocation = await document?.data()?.location;
-  //   console.log(userLocation);
-  //   if (userLocation) {
-  //     const user = { id: key, location: userLocation };
-  //     setUsers((prevUsers) => [...prevUsers, user]);
-  //   }
-  // });
+  }, [firebase.auth().currentUser, userLocation]);
+
   let text = "Waiting..";
+  let text1 = "Waiting..";
   if (errorMsg) {
     text = errorMsg;
   } else if (userLocation) {
     text = JSON.stringify(userLocation);
+    text1 = JSON.stringify(users);
   }
-  console.log(userLocation);
   return (
     <View style={{ flex: 1 }}>
-      <Text>{text}</Text>
+      <Text>
+        {text}
+        {text1}
+      </Text>
       <MapView
         style={{ flex: 1 }}
         initialRegion={{
@@ -95,7 +103,7 @@ export default function MapScreen() {
         }}
       >
         <Marker coordinate={userLocation} title="You are here" />
-        {users.map((user) => (
+        {users?.map((user) => (
           <Marker
             key={user.id}
             coordinate={user.location}

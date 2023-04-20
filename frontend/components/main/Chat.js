@@ -8,11 +8,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsersMessages, sendMessage } from "../../redux/actions";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const Chat = (props) => {
   const scrollViewRef = useRef();
@@ -70,52 +73,77 @@ const Chat = (props) => {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : null}
-      style={styles.container}
-    >
-      <View style={styles.header}>
-        <Text style={styles.headerText}>{user.username}</Text>
-      </View>
-      <ScrollView
-        ref={scrollViewRef}
-        onContentSizeChange={() =>
-          scrollViewRef.current.scrollToEnd({ animated: true })
-        }
-        style={styles.messageList}
+    <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        style={styles.container}
       >
-        {messages?.length > 0 ? (
-          messages.map((chat) => renderMessage(chat))
-        ) : (
-          <Text>No messages yet!</Text>
-        )}
-      </ScrollView>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type a message"
-          value={text}
-          onChangeText={(value) => setText(value)}
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={onSendMessage}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+        <View style={styles.header}>
+          <View style={{ borderRadius: 30, overflow: "hidden", marginRight: 10 }}>
+            <Image
+              style={{ flex: 1, aspectRatio: 1 / 1 }}
+              source={{ uri: user?.pfp }}
+            />
+          </View>
+          <Text style={styles.headerText}>{user.username}</Text>
+        </View>
+        <ScrollView
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current.scrollToEnd({ animated: true })
+          }
+          style={styles.messageList}
+        >
+          {messages?.length > 0 ? (
+            messages.map((chat) => renderMessage(chat))
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                height: 400,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="message-bulleted-off"
+                size={24}
+                color="black"
+              />
+              <Text>No messages yet!</Text>
+            </View>
+          )}
+        </ScrollView>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Type a message"
+            value={text}
+            onChangeText={(value) => setText(value)}
+          />
+          <TouchableOpacity onPress={onSendMessage}>
+            <MaterialCommunityIcons name="send" size={24} color="black" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
   },
   header: {
     height: 50,
+    padding: 5,
     justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "transparent",
     marginBottom: 10,
+    borderBottomColor: "white",
+    borderBottomWidth: 1,
   },
   headerText: {
     fontWeight: "bold",
@@ -135,11 +163,11 @@ const styles = StyleSheet.create({
   },
   sentMessageContainer: {
     alignSelf: "flex-end",
-    backgroundColor: "#dcf8c6",
+    backgroundColor: "#fcfac9",
   },
   receivedMessageContainer: {
     alignSelf: "flex-start",
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#b69ccb",
   },
   sentMessageText: {
     color: "#333",
