@@ -37,44 +37,6 @@ export function fetchUser() {
   };
 }
 
-// export function fetchUserChats() {
-//   return (dispatch) => {
-//     const chats = [];
-
-//     firebase
-//       .firestore()
-//       .collection("chats")
-//       .where("participants", "array-contains", firebase.auth().currentUser.uid)
-//       .get()
-//       .then((snapshot) => {
-//         snapshot.forEach((doc) => {
-//           console.log(snapshot);
-//           const chatId = doc.id;
-//           const chat = doc.data();
-//           const participants = chat.participants;
-//           const otherParticipant = participants.find(
-//             (participant) => participant !== firebase.auth().currentUser.uid
-//           );
-//           const otherUserRef = firebase.firestore().collection("users").doc(otherParticipant);
-//           otherUserRef.get().then((doc) => {
-//             const otherUser = doc.data();
-//             const chatWithOtherUser = {
-//               id: chatId,
-//               user: {
-//                 uid: otherUser.uid,
-//                 username: otherUser.username,
-//               },
-//               chatId,
-//             };
-//             chats.push(chatWithOtherUser);
-//             console.log(chats);
-//             dispatch({ type: USER_CHATS_STATE_CHANGE, chats: chats });
-//           });
-//         });
-//       });
-//   };
-// }
-
 export function fetchUsersChats() {
   return (dispatch) => {
     firebase

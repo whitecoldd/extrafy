@@ -1,45 +1,49 @@
-import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { View, Image, TouchableOpacity } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/compat/auth";
-import * as geofirestore from "geofirestore";
 
-export default function MapScreen() {
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Distance from "./Distance";
+
+export default function MapScreen(props) {
   const db = firebase.firestore();
-  const geoFirestore = geofirestore.initializeApp(db);
-
   const [userLocation, setUserLocation] = useState({
     latitude: 47.1611615,
     longitude: 19.5057541,
   });
   const [errorMsg, setErrorMsg] = useState(null);
   const [users, setUsers] = useState([]);
-
+  const [value, setValue] = useState("10");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [filteredUsers, setfilteredUsers] = useState([]);
   useEffect(() => {
-    const getUsersNearby = async (location) => {
-      const usersRef = geoFirestore.collection("users");
-      const query = usersRef.near({
-        center: new firebase.firestore.GeoPoint(
-          location.latitude,
-          location.longitude
-        ),
-        radius: 10000000,
+    const getUsersNearby = async (radius) => {
+      const center = new firebase.firestore.GeoPoint(
+        userLocation.latitude,
+        userLocation.longitude
+      );
+      const geohashPrefix = center.geohash
+        ? center.geohash.substring(0, radius)
+        : "";
+      const query = db.collection("users");
+      // .where("location", ">", geohashPrefix)
+      // .where("location", "<", geohashPrefix + "\uf8ff");
+      const snapshot = await query.get();
+      const nearbyUsers = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        const id = doc.id;
+        return { id, ...data };
       });
-      console.log(query);
-      query.get().then((querySnapshot) => {
-        console.log("querySnapshot size: ", querySnapshot.size);
-        const users = [];
-        querySnapshot.forEach((documentSnapshot) => {
-          const userLocation = documentSnapshot.get("location");
-          const user = { id: documentSnapshot.id, location: userLocation };
-          users.push(user);
-        });
-        console.log("users: ", users);
-        setUsers(users);
-      });
+      setUsers(nearbyUsers);
+      const use = users.filter(
+        (user) => user.id !== firebase.auth().currentUser.uid
+      );
+      setfilteredUsers(use);
+      console.log(filteredUsers);
     };
 
     const getLocationAsync = async () => {
@@ -73,26 +77,39 @@ export default function MapScreen() {
     };
 
     if (firebase.auth().currentUser) {
-      Promise.all([getLocationAsync()]).then(([location]) =>
-        getUsersNearby(location.coords)
-      );
+      getLocationAsync().then(() => getUsersNearby(value));
     }
-  }, [firebase.auth().currentUser, userLocation]);
+  }, [firebase.auth().currentUser, userLocation, value]);
 
-  let text = "Waiting..";
-  let text1 = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (userLocation) {
-    text = JSON.stringify(userLocation);
-    text1 = JSON.stringify(users);
-  }
+  const handleSave = (newValue) => {
+    setValue(newValue);
+    setModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
+  useLayoutEffect(() => {
+    props.navigation.setOptions({
+      headerRight: () => (
+        <MaterialCommunityIcons
+          name="signal-distance-variant"
+          size={24}
+          color="black"
+          onPress={() => setModalVisible(true)}
+        />
+      ),
+    });
+  }, []);
+
   return (
     <View style={{ flex: 1 }}>
-      <Text>
-        {text}
-        {text1}
-      </Text>
+      <Distance
+        initialValue={value}
+        onSave={handleSave}
+        visible={modalVisible}
+        onCancel={handleCancel}
+      />
       <MapView
         style={{ flex: 1 }}
         initialRegion={{
@@ -102,13 +119,28 @@ export default function MapScreen() {
           longitudeDelta: 0.0421,
         }}
       >
-        <Marker coordinate={userLocation} title="You are here" />
-        {users?.map((user) => (
+        <Marker coordinate={userLocation} pinColor="red" title="You are here" />
+        {filteredUsers?.map((user, i) => (
           <Marker
-            key={user.id}
-            coordinate={user.location}
-            title="Another user"
-          />
+            key={i}
+            coordinate={{
+              latitude: user?.location?.latitude,
+              longitude: user?.location?.longitude,
+            }}
+            pinColor={"blue"}
+            title={user?.username}
+          >
+            <TouchableOpacity
+              onPress={() =>
+                props.navigation.navigate("Profile", { uid: user.id })
+              }
+            >
+              <Image
+                style={{ height: 35, width: 35, borderRadius: 30 }}
+                source={{ uri: user?.pfp }}
+              />
+            </TouchableOpacity>
+          </Marker>
         ))}
       </MapView>
     </View>
