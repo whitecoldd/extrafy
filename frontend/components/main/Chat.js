@@ -78,15 +78,24 @@ const Chat = (props) => {
         behavior={Platform.OS === "ios" ? "padding" : null}
         style={styles.container}
       >
-        <View style={styles.header}>
-          <View style={{ borderRadius: 30, overflow: "hidden", marginRight: 10 }}>
+        <TouchableOpacity
+          style={styles.header}
+          onPress={() =>
+            props.navigation.navigate("ProfileS", {
+              uid: user.uid,
+            })
+          }
+        >
+          <View
+            style={{ borderRadius: 30, overflow: "hidden", marginRight: 10 }}
+          >
             <Image
               style={{ flex: 1, aspectRatio: 1 / 1 }}
               source={{ uri: user?.pfp }}
             />
           </View>
           <Text style={styles.headerText}>{user.username}</Text>
-        </View>
+        </TouchableOpacity>
         <ScrollView
           ref={scrollViewRef}
           onContentSizeChange={() =>

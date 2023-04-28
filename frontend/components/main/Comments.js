@@ -86,27 +86,66 @@ const Comments = (props) => {
       });
     }
   };
-
   return (
     <LinearGradient colors={["#fcfac9", "#b69ccb"]} style={styles.container}>
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 7 }}>
         <Image
-          style={{ flex: 1 }}
+          style={{ flex: 1, resizeMode: "stretch" }}
           source={{ uri: props.route.params.post.downloadURL }}
         />
       </View>
-      <FlatList
-        numColumns={1}
-        data={comments}
-        renderItem={({ item }) => (
-          <View style={{ flex: 1 }}>
-            {item.user !== undefined ? (
-              <Text style={styles.text}>{item.user?.username}</Text>
-            ) : null}
-            <Text style={styles.comment}>{item.comment}</Text>
-          </View>
-        )}
-      />
+      <View style={{ flex: 3 }}>
+        <FlatList
+          numColumns={1}
+          data={comments}
+          horizontal={false}
+          renderItem={({ item }) => {
+            const time = new Date(item.created_at?.seconds * 1000);
+            const realTime = `${time.getHours()}:${
+              (time.getMinutes() < 10 ? "0" : "") + time.getMinutes()
+            }`;
+            return (
+              <View
+                style={{
+                  flex: 1,
+                  paddingBottom: 10,
+                  borderBottomColor: "black",
+                  borderBottomWidth: 1,
+                  marginHorizontal: 5,
+                }}
+              >
+                {item.user !== undefined ? (
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      paddingVertical: 10,
+                      alignItems: "center",
+                      alignContent: "center",
+                    }}
+                    onPress={() =>
+                      props.navigation.navigate("Profile", {
+                        uid: item.user.uid,
+                      })
+                    }
+                  >
+                    <View style={{ borderRadius: 30, overflow: "hidden" }}>
+                      <Image
+                        style={{ flex: 1, aspectRatio: 1 / 1 }}
+                        source={{ uri: item.user.pfp }}
+                      />
+                    </View>
+                    <Text style={styles.text}>{item.user?.username}</Text>
+                  </TouchableOpacity>
+                ) : null}
+                <View style={styles.comment}>
+                  <Text>{item.comment}</Text>
+                  <Text>{realTime}</Text>
+                </View>
+              </View>
+            );
+          }}
+        />
+      </View>
       <View style={styles.commentSendBox}>
         <TextInput
           placeholder="Write a comment..."
@@ -152,9 +191,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 22,
+    marginLeft: 5,
   },
   comment: {
-    marginLeft: 10,
+    marginHorizontal: 10,
+    width: "auto",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   inputBox: {
     height: 40,
@@ -168,7 +211,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     margin: 1,
-    borderColor: "#ab87ff",
+    borderColor: "black",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",

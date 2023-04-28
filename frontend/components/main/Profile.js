@@ -28,7 +28,7 @@ const Profile = (props) => {
       setUser(currentUser);
       setUserPosts(posts);
       setLoading(false);
-    } else {
+    } else if (props.route.params.uid !== firebase.auth().currentUser.uid) {
       firebase
         .firestore()
         .collection("users")
@@ -108,32 +108,42 @@ const Profile = (props) => {
             : styles.infoSelf
         }
       >
-        <View style={{ borderRadius: 30, overflow: "hidden" }}>
-          <Image
-            style={{ flex: 1, aspectRatio: 1 / 1 }}
-            source={{ uri: user.pfp }}
-          />
+        <View style={styles.information}>
+          <View style={{ borderRadius: 30, overflow: "hidden" }}>
+            <Image
+              style={{ flex: 1, aspectRatio: 1 / 1 }}
+              source={{ uri: user?.pfp }}
+            />
+          </View>
+          <View style={{ justifyContent: "flex-start", marginLeft: 15 }}>
+            <Text style={styles.username}>{user.username}</Text>
+            <Text style={styles.name}>{user?.name}</Text>
+            <Text style={styles.desc}>{user?.description}</Text>
+          </View>
         </View>
-        <View>
-          <Text style={styles.username}>{user.username}</Text>
-          <Text style={styles.name}>{user?.name}</Text>
-        </View>
+
         {props.route.params.uid !== firebase.auth().currentUser.uid ? (
           <View style={styles.btnContainer1}>
             {follow ? (
               <TouchableOpacity style={styles.btn} onPress={() => onUnfollow()}>
-                <Text style={{ backgroundColor: "transparent" }}>Unfollow</Text>
+                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                  Unfollow
+                </Text>
               </TouchableOpacity>
             ) : (
               <TouchableOpacity style={styles.btn} onPress={() => onFollow()}>
-                <Text style={{ backgroundColor: "transparent" }}>Follow</Text>
+                <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                  Follow
+                </Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity
               style={styles.btn}
               onPress={() => props.navigation.navigate("Chat", { user })}
             >
-              <Text style={{ backgroundColor: "transparent" }}>Message</Text>
+              <Text style={{ color: "white", fontWeight: 700, fontSize: 16 }}>
+                Message
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -172,8 +182,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   info: {
-    flex: 1 / 5,
+    flex: 3 / 9,
     margin: 10,
+  },
+  information: {
+    flex: 1,
+    flexDirection: "row",
   },
   infoSelf: {
     margin: 10,
@@ -202,10 +216,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#ab87ff",
     backgroundColor: "#ab87ff",
-    fontSize: 16,
     width: "40%",
     padding: 8,
-    color: "#FFFFE0",
     marginTop: 5,
   },
   username: {
@@ -214,6 +226,10 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   name: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  desc: {
     fontSize: 16,
     color: "#666",
   },

@@ -16,7 +16,6 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/auth";
 import { FontAwesome } from "@expo/vector-icons";
-import ImageColors from "react-native-image-colors";
 
 const Feed = (props) => {
   const [posts, setPosts] = useState([]);
@@ -37,7 +36,6 @@ const Feed = (props) => {
       setPosts(uniqueFeed);
     }
   }, [props.usersFollowsLoaded, props.feed]);
-
   const onLike = (userId, postId) => {
     firebase
       .firestore()
@@ -75,13 +73,18 @@ const Feed = (props) => {
               return (
                 <View style={styles.postContainer}>
                   <View>
-                    <View
+                    <TouchableOpacity
                       style={{
                         flexDirection: "row",
                         padding: 10,
                         alignItems: "center",
                         alignContent: "center",
                       }}
+                      onPress={() =>
+                        props.navigation.navigate("ProfileS", {
+                          uid: item.user.uid,
+                        })
+                      }
                     >
                       <View style={{ borderRadius: 30, overflow: "hidden" }}>
                         <Image
@@ -92,7 +95,7 @@ const Feed = (props) => {
                       <Text style={styles.userContainer}>
                         {item.user.username}
                       </Text>
-                    </View>
+                    </TouchableOpacity>
 
                     <View style={styles.imgContainer}>
                       <Image
@@ -112,6 +115,9 @@ const Feed = (props) => {
                             size={40}
                             color={btnColor}
                           />
+                          <Text style={styles.likeCountText}>
+                            {item.likesCount}
+                          </Text>
                         </TouchableOpacity>
                       ) : (
                         <TouchableOpacity
@@ -125,6 +131,9 @@ const Feed = (props) => {
                             size={40}
                             color={btnColor}
                           />
+                          <Text style={styles.dislikeCountText}>
+                            {item.likesCount}
+                          </Text>
                         </TouchableOpacity>
                       )}
                       <TouchableOpacity
@@ -133,7 +142,7 @@ const Feed = (props) => {
                           props.navigation.navigate("Comments", {
                             postId: item.id,
                             uid: item.user.uid,
-                            post: item
+                            post: item,
                           })
                         }
                       >
@@ -146,7 +155,7 @@ const Feed = (props) => {
                       </TouchableOpacity>
                     </View>
 
-                    <Text style={styles.userContainer}>{item.caption}</Text>
+                    <Text style={styles.captionContainer}>{item.caption}</Text>
                   </View>
                 </View>
               );
@@ -157,18 +166,6 @@ const Feed = (props) => {
     </View>
   );
 };
-
-// const useContrastColor = (color) => {
-//   const luminance = getLuminance(color);
-//   return luminance > 0.5 ? "#000000" : "#FFFFFF";
-// };
-
-// const getLuminance = (color) => {
-//   const [r, g, b] = color.match(/\w\w/g).map((c) => parseInt(c, 16));
-//   const [R, G, B] = [r / 255, g / 255, b / 255];
-//   const luminance = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-//   return luminance;
-// };
 
 const styles = StyleSheet.create({
   container: {
@@ -183,6 +180,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 22,
     overflow: "hidden",
+  },
+  captionContainer: {
+    padding: 5,
+    margin: 5,
+    fontSize: 22,
+    overflow: "hidden",
+    color: "white"
   },
   icon: {
     marginRight: 15,
@@ -206,6 +210,19 @@ const styles = StyleSheet.create({
   imgContainer: {
     borderRadius: 20,
     overflow: "hidden",
+  },
+  likeCountText: {
+    position: "absolute",
+    top: 10,
+    left: 21,
+    fontWeight: "700",
+  },
+  dislikeCountText: {
+    position: "absolute",
+    top: 10,
+    left: 21,
+    fontWeight: "700",
+    color: "white",
   },
 });
 

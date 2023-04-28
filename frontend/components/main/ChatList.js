@@ -16,6 +16,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/compat/auth";
 import { LinearGradient } from "expo-linear-gradient";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const ChatList = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -61,7 +62,21 @@ const ChatList = ({ navigation }) => {
             keyExtractor={(item) => item}
           />
         ) : (
-          <Text>No chats yet</Text>
+          <View
+            style={{
+              flex: 1,
+              height: 400,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="message-bulleted-off"
+              size={24}
+              color="black"
+            />
+            <Text>No chats yet!</Text>
+          </View>
         )}
       </View>
     </LinearGradient>

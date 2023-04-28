@@ -11,8 +11,6 @@ import { Provider } from "react-redux";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/reducers";
 import thunk from "redux-thunk";
-// import * as geofirestore from "geofirestore";
-
 import Loading from "./components/Loading";
 import AddScreen from "./components/main/Add";
 import SaveScreen from "./components/main/Save";
@@ -20,6 +18,7 @@ import CommentsScreen from "./components/main/Comments";
 import ChatScreen from "./components/main/Chat";
 import MapScreen from "./components/main/Map";
 import EditScreen from "./components/main/Edit";
+import ProfileScreen from "./components/main/Profile";
 
 const store = configureStore({
   reducer: rootReducer,
@@ -43,7 +42,6 @@ let db;
 if (firebase.apps.length === 0) {
   db = firebase.initializeApp(firebaseConfig);
 }
-// const geoFirestore = new geofirestore(db);
 const Stack = createNativeStackNavigator();
 
 export default function App(props, { navigation }) {
@@ -73,16 +71,24 @@ export default function App(props, { navigation }) {
             component={AuthScreen}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="Register" component={RegisterScreen} options={{
-                headerStyle: {
-                  backgroundColor: "#b69ccb",
-                },
-              }} />
-          <Stack.Screen name="Login" component={LoginScreen} options={{
-                headerStyle: {
-                  backgroundColor: "#b69ccb",
-                },
-              }} />
+          <Stack.Screen
+            name="Register"
+            component={RegisterScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: "#b69ccb",
+              },
+            }}
+          />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{
+              headerStyle: {
+                backgroundColor: "#b69ccb",
+              },
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -100,7 +106,16 @@ export default function App(props, { navigation }) {
                 },
               }}
             />
-            {/* <Stack.Screen name="Profile" component={ProfileScreen} /> */}
+            <Stack.Screen
+              name="ProfileS"
+              navigation={navigation}
+              component={ProfileScreen}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#fcfac9",
+                },
+              }}
+            />
             <Stack.Screen
               name="Add"
               component={AddScreen}

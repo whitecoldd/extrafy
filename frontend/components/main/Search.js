@@ -20,7 +20,7 @@ const Search = ({ navigation }) => {
     firebase
       .firestore()
       .collection("users")
-      .where("username", ">=", search)
+      .where("username", ">=", search.toLowerCase())
       .get()
       .then((snapshot) => {
         let results = snapshot.docs.map((doc) => {
@@ -54,7 +54,7 @@ const Search = ({ navigation }) => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.userContainer}
-            onPress={() => navigation.navigate("Profile", { uid: item.id })}
+            onPress={() => navigation.navigate("ProfileS", { uid: item.id })}
           >
             <View style={{ borderRadius: 30, overflow: 'hidden' }}>
               <Image

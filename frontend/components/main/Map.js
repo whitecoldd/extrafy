@@ -5,7 +5,6 @@ import * as Location from "expo-location";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import "firebase/compat/auth";
-
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Distance from "./Distance";
 
@@ -16,7 +15,6 @@ export default function MapScreen(props) {
     longitude: 19.5057541,
   });
   const [errorMsg, setErrorMsg] = useState(null);
-  const [users, setUsers] = useState([]);
   const [value, setValue] = useState("10");
   const [modalVisible, setModalVisible] = useState(false);
   const [filteredUsers, setfilteredUsers] = useState([]);
@@ -26,23 +24,30 @@ export default function MapScreen(props) {
         userLocation.latitude,
         userLocation.longitude
       );
-      const geohashPrefix = center.geohash
-        ? center.geohash.substring(0, radius)
-        : "";
-      const query = db.collection("users");
-      // .where("location", ">", geohashPrefix)
-      // .where("location", "<", geohashPrefix + "\uf8ff");
+      const maxLat = center.latitude + radius / 111000;
+      const minLat = center.latitude - radius / 111000;
+      const query = db
+        .collection("users")
+        .where(
+          "location",
+          ">=",
+          new firebase.firestore.GeoPoint(minLat, center.longitude)
+        )
+        .where(
+          "location",
+          "<=",
+          new firebase.firestore.GeoPoint(maxLat, center.longitude)
+        );
       const snapshot = await query.get();
       const nearbyUsers = snapshot.docs.map((doc) => {
         const data = doc.data();
         const id = doc.id;
         return { id, ...data };
       });
-      setUsers(nearbyUsers);
-      const use = users.filter(
+      const filteredUsers = nearbyUsers.filter(
         (user) => user.id !== firebase.auth().currentUser.uid
       );
-      setfilteredUsers(use);
+      setfilteredUsers(filteredUsers);
       console.log(filteredUsers);
     };
 
@@ -129,17 +134,15 @@ export default function MapScreen(props) {
             }}
             pinColor={"blue"}
             title={user?.username}
+            tappable={true}
+            onPress={() =>
+              props.navigation.navigate("Profile", { uid: user.id })
+            }
           >
-            <TouchableOpacity
-              onPress={() =>
-                props.navigation.navigate("Profile", { uid: user.id })
-              }
-            >
-              <Image
-                style={{ height: 35, width: 35, borderRadius: 30 }}
-                source={{ uri: user?.pfp }}
-              />
-            </TouchableOpacity>
+            <Image
+              style={{ height: 35, width: 35, borderRadius: 30 }}
+              source={{ uri: user?.pfp }}
+            />
           </Marker>
         ))}
       </MapView>

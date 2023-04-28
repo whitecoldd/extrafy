@@ -81,7 +81,12 @@ function Edit(props) {
       const task = firebase.storage().ref().child(childPath).put(blob);
 
       const taskProgress = (snapshot) => {
-        console.log(`transferred: ${snapshot.bytesTransferred}`);
+        console.log(
+          `transferred: ${(
+            (snapshot.bytesTransferred / snapshot.totalBytes) *
+            100
+          ).toFixed()} %`
+        );
       };
 
       const taskCompleted = () => {
@@ -154,7 +159,7 @@ function Edit(props) {
             flex: 1 / 2,
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
           }}
           onPress={() => pickImage()}
         >
