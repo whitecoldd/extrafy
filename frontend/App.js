@@ -30,13 +30,13 @@ const store = configureStore({
 });
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDPXwmwYiJY-AQr9HZiqpSHQ6kH-k0JtOg",
-  authDomain: "extrafy-207f3.firebaseapp.com",
-  projectId: "extrafy-207f3",
-  storageBucket: "extrafy-207f3.appspot.com",
-  messagingSenderId: "1098605566918",
-  appId: "1:1098605566918:web:27ace386c4e100a5c3f0c7",
-  measurementId: "G-5V8N8EEZ87",
+  apiKey: "********",
+  authDomain: "********",
+  projectId: "********",
+  storageBucket: "********",
+  messagingSenderId: "********",
+  appId: "********",
+  measurementId: "********",
 };
 let db;
 if (firebase.apps.length === 0) {
